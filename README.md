@@ -6,4 +6,4 @@ This is a repo for holding all of the training material for the D&D Center of Ex
 
 ## Table of Contents
 
-[Introduction](https://github.com/richarddubay/coe-training/introduction)
+[Introduction](https://github.com/richarddubay/coe-training/tree/main/introduction)
