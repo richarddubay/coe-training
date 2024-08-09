@@ -6,5 +6,6 @@ This is a repo for all of the training material for the D&D Center of Excellence
 
 ## Table of Contents
 
-[Introduction](https://github.com/richarddubay/coe-training/tree/main/lesson-1-introduction)
-[Project Planning](https://github.com/richarddubay/coe-training/tree/main/lesson-2-project-planning)
+- [Lesson 1: Introduction](https://github.com/richarddubay/coe-training/tree/main/lesson-1-introduction)
+- [Lesson 2: Project Planning](https://github.com/richarddubay/coe-training/tree/main/lesson-2-project-planning)
+- [Lesson 3: Databases](https://github.com/richarddubay/coe-training/tree/main/lesson-3-databases)
