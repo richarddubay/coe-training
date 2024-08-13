@@ -158,7 +158,26 @@ CREATE TABLE IF NOT EXISTS public.publishers (
 
 Here I’m creating two tables: `comic_books` and `publishers`. I’m making sure that each table has an auto-generating, auto-incrementing `id` field, and other fields associated with that entity. Adding `created_at`, `updated_at` and `deleted_at` is a good practice in case you ever find the need to filter your data based on any of those criteria.
 
-Also, just a side note here: when we “delete” we should probably never actually delete. We should just set the date (or a flag) and then check that when we’re pulling data. It could get kind of crazy with data relationships if we decide to actually delete something.
+### A Couple of Side Notes
+
+#### Deleting
+
+When we “delete” we should probably never actually delete. We should just set the date (or a flag) and then check that when we’re pulling data. It could get kind of crazy with data relationships if we decide to actually delete something.
+
+#### Indexes
+
+Indexes in SQL, like an index in the back of a book, helps the database to quickly find where data is located. When you create an index on a column in a table, the database creates a separate data structure that holds the column values in sorted order, along with pointers to the actual data rows in the table. Often, the database uses something called a B-tree for this.
+
+A B-tree is a balanced structure that helps the database perform it's searches effectively. This means that the database can quickly navigate through a tree, narrowing down the items it needs to search through at each step until it finds the data it's looking for. In his training, Eli made mention that with a B-tree, using something like SERIAL for the `id` is smart because it's just a number. You can use something like a UUID (which is just a long random string), but that takes longer to process, and are best used for things like user ids. They're great especially if you're going to be exposing ids through something like the query string and you're looking for something that is always unique. I've seen tables that have a integer as the `id`, but also include a UUID, which provides you with multiple ways to lookup an item.
+
+Without an index, the database would have to scan every row in the table to find the one it's looking for. This can be slow, especially with very large datasets. With an index, the database can just about directly jump to the data it's looking for, which speeds up queries tremendously.
+
+There are two main tradeoffs to adding an index.
+
+- One, since it creates a new structure in your database, your database is larger and takes up more space.
+- Two, it will slow down inserts, updates, and deletes because it has to update the index structure as well as the database every time.
+
+So ... a good rule of thumb is to save your indexes for those highly-searched, not often to change pieces of data. Think like email addresses or user names.
 
 Now, let’s run `docker compose up` and see if it runs:
 
