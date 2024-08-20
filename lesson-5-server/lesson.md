@@ -129,6 +129,8 @@ app.use(
 
 - The `express.json()` line is so that Express can read JSON data (like stuff you might send in the body of a PORT request when creating a new entity).
 - The `cors` line is to save us the hassle of fighting with CORS later. For our use, we can allow everything from everywhere. If you want to get specific about this, feel free to make this as secure as you'd like. Just remember what you did if you run into issues later on.
+- We will also need to install the `cors` package as a dependency: `npm i cors`, and then `import cors from "cors";` in our `app.ts` file.
+- It's also going to yell at you to install the types for "cors": `npm i --save-dev @types/cors`.
 - We need to make one last change to the `package.json`. Change the `"dev": "nodemon app.ts",` line to `"dev": "nodemon index.ts",`. Look at us fulfilling our promise to this file that we made earlier! 🎉
 
 Okay, we should be ready to test this again.
@@ -137,6 +139,56 @@ Okay, we should be ready to test this again.
 - The server should start up on port 3001 one this time. Now if you go to `http://localhost:3001` in your browser or in something like Postman, you should get the "Hello World!" message again!
 
 ### Models, Views, Controllers ... Oh My!
+
+Beautiful. Now that this is working, let's move on talk about everybody's favorite subject ... project structure!
+
+When it comes to setting up your project for success, it's kind of hard to beat the general MVC structure. In case you're unfamiliar, MVC stands for "Model, View, Controller" and they break down like so:
+
+- Models: This is your database layer. It does the actual "talking to the database."
+- Views: These are what the person using your app sees. In our case, these will be our actual API routes.
+- Controllers: This is your business logic layer. Where all your "if's" go.
+- **Note**: Sometimes people like to combine their controllers and models into one file. And that's typically fine, especially for small applications. We won't do that here, however. By keeping everything separated into their own respective places, it will make each thing easier to test later.
+
+So let's set up our project.
+
+- In the root of your `/server` folder, let's create 3 folders: `controllers`, `models`, and `routers`. `routers` will be our "views."
+- Inside the `routers` folder, let's create a new file with the name of one of your entities. In my case, since I'm working on a comic book store, I'm going to create a file named `comic_books.ts`.
+- In that file, let's import the Router from Express: `import { Router } from "express";`
+- Then we can initialize the Router: `const router = Router();`.
+- Let's create our first route:
+
+```
+router.route("/").get((req, res) => {
+  res.send("You have gotten all the comic books!");
+});
+```
+
+- And then let's export the `router`: `export default router;`
+- So your file should look like:
+
+```
+import { Router } from "express";
+
+const router = Router();
+
+router.route("/").get((req, res) => {
+  res.send("You have gotten all the comic books!");
+});
+
+export default router;
+```
+
+- For our `routers` we're going to use barrel files to export everything from one place. So let's create a `index.ts` file in our `/routers` folder and export from the `comic_books` file.
+  - `export { default as comicBookRouter } from "./comic_books"`.
+- Now back in our `app.ts` file, add the following line: `app.use("/comic_books", comicBookRouter);`.
+
+  - This sets up the `/comic_books` route and we're telling it we want it to look at the `comicBookRouter` for any and all things related to that route.
+
+Now that we've got all that done, let's see if this works.
+
+- In your terminal, make sure you're in your `/server` directory and run `npm run dev`.
+- When that starts up, go to `http://localhost:3001/comic_books (or whatever your entity is).
+- You should see what you sent!
 
 - Step 4: Set up MVC and add the first actual route.
 
