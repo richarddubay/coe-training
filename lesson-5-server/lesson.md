@@ -80,8 +80,65 @@ app.listen(port, () => {
 
 - Open up `localhost:3000` in your browser or in Postman and you should see "Hello World!"
 
-- Step 3: Split `app.ts` up into `app.ts` and `index.ts`.
-- Step 4: Add the first actual route.
+### Hello World V2
+
+We're going to make this a little more functional and split this `app.ts` file up into a couple of pieces. One will be this `app.ts` and this is where we are going to define our routes. The other part will be an `index.ts` file. That part will be where we tell the app to start up (like we promised when we changed the `package.json` to use `index.ts` as the main file).
+
+- In the root of the `/server` folder create an `index.ts` file.
+- Copy over the `app.listen` section from `app.ts` and remove it from `app.ts`.
+- In `app.ts` we'll need to export `app` in order to use it in the `index.ts` file, so at the bottom of the file let's put in: `export default app;`.
+- Then let's import that in `index.ts`: `import app from "./app";`
+- The only thing missing now is `port`, and this is a great opportunity to introduce environment variables.
+- You know that environment variables can be used to store important information such as database credentials or API keys. The environment variable file (`.env`) allows us to store these in one place and use them throughout our application. This is the easiest and best way to keep sensitive information secure.
+- In order to use environment variables in our app, we're going to need two things:
+  - First, we're going to need a `.env` file. You can create this in the root of your `/server` folder. In that file, just put `PORT=3001`. A few of things here:
+    - I changed the port to 3001 to more closely match what you might see when using other frameworks. Like when using Next JS I believe the front end runs on port 3000 and the API routes run on 3001. You can obviously choose whatever open port you want to, but 3001 is pretty safe for this.
+    - We typically uppercase our environment variables as a convention. Just something to get used to.
+    - Some people like to make a `.env.example` file to go along with their `.env` file. This is a great way to make setting up the app easier for someone else who might work on it in the future. You can do that or not ... totally up to you.
+  - Second, in order to actually read the environment variables in our files, we need to use the `dotenv` package ([https://www.npmjs.com/package/dotenv](https://www.npmjs.com/package/dotenv)). So let's install that:
+    - `npm i --save-dev dotenv`
+    - And let's import it in our `index.ts` file: `import "dotenv/config";`
+- Now let's set up and read the `PORT` variable we added to our `.env` file in our `index.ts` file.
+- `const PORT = process.env.PORT;`
+- We should also just make sure that we have a default in case we happen to delete the value in our `.env` file or it somehow gets messed up. Let's change that line to: `const PORT = process.env.PORT || "3001";`.
+- So now your `index.ts` file should look like this:
+
+```
+import app from "./app";
+import "dotenv/config";
+
+const PORT = process.env.PORT || "3001";
+
+app.listen(PORT, () => {
+  console.log(`F1 Fantasy League app listening on port ${PORT}`);
+});
+```
+
+- Back in the `app.ts` file we can delete the `const port = 3000` line.
+- As long as we're in the `app.ts` file I'm going to have you add a couple of lines to set us up for success later:
+
+```
+app.use(express.json());
+
+app.use(
+  cors({
+    origin: "*",
+  })
+);
+```
+
+- The `express.json()` line is so that Express can read JSON data (like stuff you might send in the body of a PORT request when creating a new entity).
+- The `cors` line is to save us the hassle of fighting with CORS later. For our use, we can allow everything from everywhere. If you want to get specific about this, feel free to make this as secure as you'd like. Just remember what you did if you run into issues later on.
+- We need to make one last change to the `package.json`. Change the `"dev": "nodemon app.ts",` line to `"dev": "nodemon index.ts",`. Look at us fulfilling our promise to this file that we made earlier! 🎉
+
+Okay, we should be ready to test this again.
+
+- Head back out to your terminal, make sure that you're still in your `/server` directory, and run `npm run dev` again.
+- The server should start up on port 3001 one this time. Now if you go to `http://localhost:3001` in your browser or in something like Postman, you should get the "Hello World!" message again!
+
+### Models, Views, Controllers ... Oh My!
+
+- Step 4: Set up MVC and add the first actual route.
 
 ## Homework
 
