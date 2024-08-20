@@ -4,6 +4,7 @@
 
 Let’s go over the homework from last time:
 
+- Any issues with the SQL Bolt training?
 - Any questions about SQL?
 
 ## Create Database Folders
@@ -162,7 +163,7 @@ Here I’m creating two tables: `comic_books` and `publishers`. I’m making sur
 
 #### Deleting
 
-When we “delete” we should probably never actually delete. We should just set the date (or a flag) and then check that when we’re pulling data. It could get kind of crazy with data relationships if we decide to actually delete something.
+When we “delete” we should probably never actually delete. It's totally okay if you want to _actually_ delete right now, but in general it's frowned upon. We should just set the date (or a flag) and then check that when we’re pulling data. It could get kind of crazy with data relationships if we decide to actually delete something.
 
 #### Indexes
 
@@ -178,6 +179,8 @@ There are two main tradeoffs to adding an index.
 - Two, it will slow down inserts, updates, and deletes because it has to update the index structure as well as the database every time.
 
 So ... a good rule of thumb is to save your indexes for those highly-searched, not often to change pieces of data. Think like email addresses or user names.
+
+### Let's Run This
 
 Now, let’s run `docker compose up` and see if it runs:
 
