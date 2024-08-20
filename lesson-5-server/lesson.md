@@ -190,7 +190,19 @@ Now that we've got all that done, let's see if this works.
 - When that starts up, go to `http://localhost:3001/comic_books (or whatever your entity is).
 - You should see what you sent!
 
-- Step 4: Set up MVC and add the first actual route.
+**Notes**
+
+- While it works in the short term, long term, we wouldn't want to use the browser as the means to do all of our API endpoint checking. You can use `cURL`, but I honestly don't know a lot about that and perhaps you could teach me. There are some clients out there that are very good for this sort of thing. Postman and Insomnia are two really good ones. There is also one called Thunder Client [https://www.thunderclient.com/](https://www.thunderclient.com/) that is a VS Code extension. This one is pretty good and you can use it right inside VS Code ... which is nice.
+- There are other ways of sending data in Express besides `res.send`. You can use `res.status` to send a status code, or `res.json` to send some JSON data back. You can also chain them together to do something like:
+
+```
+res.status(500).json({
+      message: "Internal Server Error",
+      error: error,
+    });
+```
+
+So do some research and experiment and see what's out there.
 
 ## Homework
 
