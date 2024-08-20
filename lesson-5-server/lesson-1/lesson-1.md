@@ -1,4 +1,4 @@
-# Server
+# Lesson 1 - Server
 
 ## Review / Questions
 
@@ -127,8 +127,8 @@ app.use(
 );
 ```
 
-- The `express.json()` line is so that Express can read JSON data (like stuff you might send in the body of a PORT request when creating a new entity).
-- The `cors` line is to save us the hassle of fighting with CORS later. For our use, we can allow everything from everywhere. If you want to get specific about this, feel free to make this as secure as you'd like. Just remember what you did if you run into issues later on.
+- The `express.json()` line is a middleware (we'll get to middleware in a little bit) so that Express can read JSON data (like stuff you might send in the body of a PORT request when creating a new entity).
+- The `cors` line is another middleware to save us the hassle of fighting with CORS later. For our use, we can allow everything from everywhere. If you want to get specific about this, feel free to make this as secure as you'd like. Just remember what you did if you run into issues later on.
 - We will also need to install the `cors` package as a dependency: `npm i cors`, and then `import cors from "cors";` in our `app.ts` file.
 - It's also going to yell at you to install the types for "cors": `npm i --save-dev @types/cors`.
 - We need to make one last change to the `package.json`. Change the `"dev": "nodemon app.ts",` line to `"dev": "nodemon index.ts",`. Look at us fulfilling our promise to this file that we made earlier! 🎉
@@ -207,3 +207,4 @@ So do some research and experiment and see what's out there.
 ## Homework
 
 - Create a GET, POST, PUT, and DELETE for as many of your routes as you can. Test them and make sure they are all working as you'd expect.
+- Feel free to return "Hello World" if you want from all of them, but I think you'd be better served by thinking through what kind of data should be returned from each of them and return some fake data that actually matches what you might get back.
