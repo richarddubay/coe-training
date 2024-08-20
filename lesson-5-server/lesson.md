@@ -34,15 +34,52 @@ Now that we have our docker setup working and we have migrations and seed data, 
 ### Install Nodemon
 
 - [https://www.npmjs.com/package/nodemon](https://www.npmjs.com/package/nodemon)
-- Lastly, for now, let's install `nodemon`.
+- Let's install `nodemon`.
 - Nodemon is hot module reloading before hot module reloading was cool in all the frameworks.
-- I would tell you just to install this globally, but there will be a point later in our project where it will need to be installed to your project as well. The benefit to installing it globally is that you will be able to run it as a command from the command line. If you just install it locally to your project then you will have to set up a script in your `package.json` to run it for you. Which, we're totally going to do so it's up to you if you want to install it globally or not. I like having the option, so I think I have it installed globally but ... you do you.
+- I would tell you just to install this globally, but there will be a point later in our project where it will need to be installed to your project as well. The benefit to installing it globally is that you will be able to run it as a command from the command line. If you just install it locally to your project then you will have to set up a script in your `package.json` to run it for you. Which, we're totally going to do so it's up to you if you want to install it globally or not. I like having the option, so I think I have it installed globally as well as locally but ... you do you.
+- Globally: `npm i -g nodemon`
+- Locally: `npm i --save-dev nodemon`
+
+### Install ts-node
+
+- Lastly, for now, let's install `ts-node`.
+- Nodemon uses `ts-node` under the hood, so we have to go ahead and install that too.
+- `npm i --save-dev ts-node`.
 
 ### Hello World
 
 Now that we have all the things installed (I think), let's get started creating our Hello World endpoint.
 
-- Step 2: Get the `app.ts` file created and working.
+- In the root of your `/server` folder, create an `app.ts` file.
+- In that file, paste in the following:
+
+```
+import express from "express";
+const app = express()
+const port = 3000
+
+app.get('/', (req, res) => {
+  res.send('Hello World!')
+});
+
+app.listen(port, () => {
+  console.log(`Example app listening on port ${port}`)
+});
+```
+
+- Now, it may yell at you that it doesn't like `express`. That's probably because it needs the types for Express. So just follow the instructions it gives you there. `npm i --save-dev @types/express`.
+- Just installing the types might be enough, but for the sake of the lesson, let's go ahead and set the right types for `req` and `res` as well. `req: Request, res: Response`.
+- Good. We should be able to test this now.
+- In your terminal, make sure you are in your `/server` directory.
+- If you installed `nodemon` globally, run `nodemon app.ts`.
+- If you only installed it locally:
+
+  - Go to your `package.json`
+  - In the `scripts` section, add the following line: `"dev": "nodemon app.ts",`.
+  - Now back in your terminal, run `npm run dev`.
+
+- Open up `localhost:3000` in your browser or in Postman and you should see "Hello World!"
+
 - Step 3: Split `app.ts` up into `app.ts` and `index.ts`.
 - Step 4: Add the first actual route.
 
