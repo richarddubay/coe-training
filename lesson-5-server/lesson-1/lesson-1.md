@@ -95,7 +95,7 @@ We're going to make this a little more functional and split this `app.ts` file u
     - I changed the port to 3001 to more closely match what you might see when using other frameworks. Like when using Next JS I believe the front end runs on port 3000 and the API routes run on 3001. You can obviously choose whatever open port you want to, but 3001 is pretty safe for this.
     - We typically uppercase our environment variables as a convention. Just something to get used to.
     - Some people like to make a `.env.example` file to go along with their `.env` file. This is a great way to make setting up the app easier for someone else who might work on it in the future. You can do that or not ... totally up to you.
-  - Second, in order to actually read the environment variables in our files, we need to use the `dotenv` package ([https://www.npmjs.com/package/dotenv](https://www.npmjs.com/package/dotenv)). So let's install that:
+  - Second, in order to actually read the environment variables in our files in a Node environment, we need to use the `dotenv` package ([https://www.npmjs.com/package/dotenv](https://www.npmjs.com/package/dotenv)). So let's install that:
     - `npm i --save-dev dotenv`
     - And let's import it in our `index.ts` file: `import "dotenv/config";`
 - Now let's set up and read the `PORT` variable we added to our `.env` file in our `index.ts` file.
