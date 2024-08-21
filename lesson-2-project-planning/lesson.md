@@ -168,13 +168,13 @@ So the diagram might look something like:
                         +---------+       | Publisher  |
                               |1          +------------+
                               |n
-                        +-----------+
-                        | OrderItem |
-                        +-----------+
-                        | OrderID   |
-                        | ComicBookID|
-                        | Quantity  |
-                        +-----------+
+                        +-------------+
+                        | OrderItem   |
+                        +-------------+
+                        | OrderID     |
+                        | ComicBookID |
+                        | Quantity    |
+                        +-------------+
 
 Or … it might leave out the fields altogether and just show the entities:
 
@@ -190,6 +190,8 @@ Or … it might leave out the fields altogether and just show the entities:
 ### Mermaid JS
 
 [https://mermaid.js.org/syntax/entityRelationshipDiagram.html](https://mermaid.js.org/syntax/entityRelationshipDiagram.html)
+
+The way that we're going to create these diagrams is with Mermaid JS.
 
 Mermaid is a tool for using text and code to create these diagrams in our Markdown files.
 
