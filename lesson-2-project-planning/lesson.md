@@ -71,43 +71,63 @@ For example: The site won’t have comic book data other than title, publisher, 
 
 In your README, we’ll want to see a section like this:
 
-    ## FEATURES
+```
+# Your App Name
 
-    ### MUST HAVE
-    - Ability to ...
+## Introduction
 
-    ### SHOULD HAVE
-    - Ability to ...
+## Purpose
 
-    ### COULD HAVE
-    - Ability to ...
+## Features
 
-    ### WON'T HAVE
-    - Ability to ...
+### Must Have
+- Ability to ...
+
+### Should Have
+- Ability to ...
+
+### Could Have
+- Ability to ...
+
+### Won't Have
+- Ability to ...
+```
 
 So, for the comic book site, it might look like:
 
-    ## FEATURES
+```
+# Comic Book Store
 
-    ### MUST HAVE
-    - A person must be able to add a comic book to the cart.
-    - A person must be able to purchase a comic book.
-    ...
+## Introduction
 
-    ### SHOULD HAVE
-    - A person should be able to sign in.
-    - A person should be able to see details about the comic book they are purchasing.
-    ...
+This is a personal comic book store app being built currently as a training exercise.
 
-    ### COULD HAVE
-    - The site could have individual comic book pages that show the details of the book.
-    - The site could have an admin section where someone could manage customers, orders, and comic book data.
-    ...
+## Purpose
 
-    ### WON'T HAVE
-    - The site will not have a way for customers to contact customer service.
-    - The site will not have a way for customers to comment on what they think about a particular book.
-    ...
+The purpose of this site will be to sell my comic books for lots of money and fund the rest of my life. Or, at least, a nice dinner.
+
+## Features
+
+### Must Have
+- A person must be able to add a comic book to the cart.
+- A person must be able to purchase a comic book.
+...
+
+### Should Have
+- A person should be able to sign in.
+- A person should be able to see details about the comic book they are purchasing.
+...
+
+### Could Have
+- The site could have individual comic book pages that show the details of the book.
+- The site could have an admin section where someone could manage customers, orders, and comic book data.
+...
+
+### Won't Have
+- The site will not have a way for customers to contact customer service.
+- The site will not have a way for customers to comment on what they think about a particular book.
+...
+```
 
 ## ERD / Domain Diagrams
 
