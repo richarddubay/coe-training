@@ -132,24 +132,24 @@ The comic book site we talked about earlier might have some tables like:
 
 An ERD might show:
 
-    +------------+      +---------+        +------------+
-    |  Customer  |      |  Order  |        | ComicBook  |
-    |------------|      |---------|        |------------|
-    | id (PK)    | 1    | id (PK) |    n   | id (PK)    |
-    | name       |---+--| orderDate|-------| title      |
-    | email      |      | customerId (FK)  | author     |
-    +------------+      +---------+        | price      |
-                                            | publisher  |
-                                            +------------+
-                        1           n
-                        |-----------|
-                        |OrderItem  |
-                        |-----------|
-                        | id (PK)   |
-                        | orderId(FK)|
-                        | comicBookId(FK)|
-                        | quantity  |
-                        +-----------+
+    +------------+      +-----------------+       +------------+
+    |  Customer  |      |  Order          |       | ComicBook  |
+    |------------|      |-----------------|       |------------|
+    | id (PK)    |1     | id (PK)         |1     n| id (PK)    |
+    | name       |---+--| orderDate       |-------| title      |
+    | email      |      | customerId (FK) |       | author     |
+    +------------+      +-----------------+       | price      |
+                                |1                | publisher  |
+                                |                 +------------+
+                                |n
+                        +-----------------+
+                        |OrderItem        |
+                        |-----------------|
+                        | id (PK)         |
+                        | orderId (FK)    |
+                        | comicBookId (FK)|
+                        | quantity        |
+                        +-----------------+
 
 The associated domain diagram notes that:
 
@@ -159,14 +159,14 @@ The associated domain diagram notes that:
 
 So the diagram might look something like:
 
-    +-----------+       +---------+       +-----------+
-    | Customer  |       |  Order  |       | ComicBook |
-    +-----------+       +---------+       +-----------+
-    | Name      |1     n| OrderID |     n | ComicBookID|
+    +-----------+       +---------+       +------------+
+    | Customer  |       |  Order  |       | ComicBook  |
+    +-----------+       +---------+       +------------+
+    | Name      |1     n| OrderID |1    n | ComicBookID|
     | Email     |-------| Date    |-------| Title      |
     +-----------+       | Total   |       | Author     |
                         +---------+       | Publisher  |
-                              |1          +-----------+
+                              |1          +------------+
                               |n
                         +-----------+
                         | OrderItem |
@@ -178,7 +178,7 @@ So the diagram might look something like:
 
 Or … it might leave out the fields altogether and just show the entities:
 
-    +-----------+1     n+---------+      n+-----------+
+    +-----------+1     n+---------+1     n+-----------+
     | Customer  |-------|  Order  |-------| ComicBook |
     +-----------+       +---------+       +-----------+
                               |1
@@ -191,17 +191,17 @@ Or … it might leave out the fields altogether and just show the entities:
 
 [https://mermaid.js.org/syntax/entityRelationshipDiagram.html](https://mermaid.js.org/syntax/entityRelationshipDiagram.html)
 
-Mermaid is a tool that for using text and code to create these diagrams in our Markdown files.
+Mermaid is a tool for using text and code to create these diagrams in our Markdown files.
 
 We can use a VSCode extension like: [https://marketplace.visualstudio.com/items?itemName=bierner.markdown-mermaid](https://marketplace.visualstudio.com/items?itemName=bierner.markdown-mermaid) to preview the diagrams in VSCode.
 
-See the [ERDDiagrams](https://github.com/richarddubay/coe-training/tree/main/lesson-2-project-planning/README.md)document for examples.
+See the [ERDDiagrams](https://github.com/richarddubay/coe-training/tree/main/lesson-2-project-planning/README.md) document for examples.
 
 ## ADRs
 
 ADRs, or “Architectural Decision Records” are documents that we can create for capturing important architectural decisions made during the course of creating our project.
 
-This is important because how many times have you been in a project where you asked yourself “Why does this project use two tables called User and User2” or any other “why is this project this way?” kind of questions? These documents server to answer those questions.
+This is important because how many times have you been in a project where you asked yourself “Why does this project use two tables called User and User2” or any other “why is this project this way?” kind of questions? These documents serve to answer those questions.
 
 To create our ADRs we’re going to use a tool called … wait for it … “ADR Tools!” We can find that package at this link: [https://github.com/npryce/adr-tools](https://github.com/npryce/adr-tools). You can either install it globally or get it from Homebrew if you use that. The point is that you want to be able to use it from the command line.
 
