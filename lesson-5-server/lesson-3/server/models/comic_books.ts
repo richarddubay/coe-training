@@ -1,3 +1,7 @@
+export const deleteComicBook = async (comicBookId: number) => {
+  return `Deleted comic book with id: ${comicBookId}`;
+};
+
 export const getAllComicBooks = async () => {
   return [
     {
@@ -17,4 +21,25 @@ export const getAllComicBooks = async () => {
       created_at: new Date(),
     },
   ];
+};
+
+export const getComicBookById = async (comicBookId: number) => {
+  return [
+    {
+      id: comicBookId,
+      title: "Avengers",
+      issue_number: 1,
+      publisher_id: 2,
+      published_date: "2018-05-02",
+      created_at: new Date(),
+    },
+  ];
+};
+
+export const postComicBook = async () => {
+  return `Created comic book`;
+};
+
+export const putComicBook = async (comicBookId: number) => {
+  return `Updated comic book with id: ${comicBookId}`;
 };
