@@ -1,0 +1,92 @@
+// Step 1
+// import express, { Request, Response } from "express";
+// const app = express();
+// const port = 3000;
+
+// app.get("/", (req: Request, res: Response) => {
+//   res.send("Hello World!");
+// });
+
+// app.listen(port, () => {
+//   console.log(`Example app listening on port ${port}`);
+// });
+
+// Step 2
+// import express, { Request, Response } from "express";
+// const app = express();
+// app.use(express.json());
+
+// app.use(
+//   cors({
+//     origin: "*",
+//   })
+// );
+// app.get("/", (req: Request, res: Response) => {
+//   res.send("Hello World!");
+// });
+
+// export default app;
+
+// Step 3
+// import express, { Request, Response } from "express";
+// import cors from "cors";
+// import { comicBookRouter } from "./routers";
+
+// const app = express();
+// app.use(express.json());
+
+// app.use(
+//   cors({
+//     origin: "*",
+//   })
+// );
+
+// app.get("/", (req: Request, res: Response) => {
+//   res.send("Hello World!");
+// });
+
+// app.use("/comic_books", comicBookRouter);
+
+// export default app;
+
+// Step 4 - Lesson 5 Part 3
+import express, { Request, Response } from "express";
+import cors from "cors";
+import { comicBookRouter } from "./routers";
+import swaggerJsDoc from "swagger-jsdoc";
+import swaggerUi from "swagger-ui-express";
+
+const app = express();
+app.use(express.json());
+
+app.use(
+  cors({
+    origin: "*",
+  })
+);
+
+const options = {
+  definition: {
+    openapi: "3.0.0",
+    info: {
+      title: "Comic Book Store",
+      version: "1.0.0",
+      description:
+        "This is the Swagger API documentation for the Comic Book Store.",
+    },
+  },
+  apis: ["./routers/*.ts"], // files containing annotations as above
+  // apis: ['./routers/**.ts', `${__dirname}/routers/*.ts`],
+};
+
+const swaggerSpec = swaggerJsDoc(options);
+console.log("swaggerSpec = ", swaggerSpec);
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+
+app.get("/", (req: Request, res: Response) => {
+  res.send("Hello World!");
+});
+
+app.use("/comic_books", comicBookRouter);
+
+export default app;
