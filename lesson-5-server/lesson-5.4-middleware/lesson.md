@@ -17,7 +17,7 @@ Middleware allows you to do things before it hits your route handlers.
 
 For example, an auth middleware (which is something we will actually build later) might allow you to check to see if someone is signed in before directing them to a particular route. So you could have an "unauthorized" route and an "authorized" route that go to the same "/" route, but the middleware will figure out which one is the right one to go to based on what it finds when it runs.
 
-The order matters when adding middleware.
+**PRO TIP**:The order matters when adding middleware.
 
 So for example, if we added an auth middleware and placed all of our routes below the middleware then the middleware would run on all the routes. But, if we were to move one of our routes above the middleware, then the middleware would not run on that particular route.
 

@@ -11,7 +11,7 @@ Let’s go over the homework from last time:
 
 ## Swag
 
-Now that we have routers and models and controllers, let's documenting our API.
+Now that we have routers and models and controllers (oh my), let's document our API.
 
 There are two parts of the API documentation formula we'll need to look at. The first is Swagger. You've all probably used Swagger before so you know that it's really just a visual way to view and interact with your API endpoints. We feed Swagger some documentation and our code and it will generate interactive API documentation, in some cases including the ability to try out the API directly from the browser. Swagger uses the Open API specification which is just a way to describe the structure of our APIs. Swagger is great because it forces you to use a standard format for your API documentation, it's super easy to use, and since it generates it's documentation from your code, it's always up-to-date.
 
