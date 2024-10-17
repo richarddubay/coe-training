@@ -197,9 +197,9 @@ Now that we've got all that done, let's see if this works.
 
 ```
 res.status(500).json({
-      message: "Internal Server Error",
-      error: error,
-    });
+  message: "Internal Server Error",
+  error: error,
+});
 ```
 
 So do some research and experiment and see what's out there.
