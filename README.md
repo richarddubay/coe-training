@@ -11,3 +11,13 @@ This is a repo for all of the training material for the D&D Center of Excellence
 - [Lesson 3: Databases](https://github.com/richarddubay/coe-training/tree/main/lesson-3-databases)
 - [Lesson 4: Project Setup](https://github.com/richarddubay/coe-training/tree/main/lesson-4-project-setup)
 - [Lesson 5: Server](https://github.com/richarddubay/coe-training/tree/main/lesson-5-server)
+
+## Still To Do
+
+- 5.5: Validation
+- 5.6: Prisma (and connecting to our database)
+- 5.7: Auth
+- 5.8: Testing
+- 5.9: Error Handling
+- 5.10: Deployment (to AWS, including Github Actions and Lightsail)
+- 6: Front End
