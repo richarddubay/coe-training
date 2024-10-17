@@ -46,6 +46,8 @@ Now that we have our docker setup working and we have migrations and seed data, 
 - Nodemon uses `ts-node` under the hood, so we have to go ahead and install that too.
 - `npm i --save-dev ts-node`.
 
+**Side Note**: Another potential package we could use here is TSX (https://tsx.is/getting-started) instead of the `nodemon` and `ts-node` combo. Works basically the same way.
+
 ### Hello World
 
 Now that we have all the things installed (I think), let's get started creating our Hello World endpoint.
