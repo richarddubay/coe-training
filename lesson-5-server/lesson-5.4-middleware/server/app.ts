@@ -142,7 +142,7 @@ import cors from "cors";
 import { comicBookRouter } from "./routers";
 import swaggerJsDoc from "swagger-jsdoc";
 import swaggerUi from "swagger-ui-express";
-import { testMiddleware } from "./middleware/test";
+import { authMiddleware } from "./middleware/auth";
 
 const app = express();
 app.use(express.json());
@@ -175,8 +175,9 @@ app.get("/", (req: Request, res: Response) => {
 });
 
 // app.use(testMiddleware);
+app.use(authMiddleware);
 
-// app.use("/comic_books", comicBookRouter);
-app.use("/comic_books", testMiddleware, comicBookRouter);
+app.use("/comic_books", comicBookRouter);
+// app.use("/comic_books", authMiddleware, comicBookRouter);
 
 export default app;
