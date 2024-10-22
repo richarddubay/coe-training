@@ -14,7 +14,6 @@ This is a repo for all of the training material for the D&D Center of Excellence
 
 ## Still To Do
 
-- 5.6: Prisma (and connecting to our database)
 - 5.7: Auth
 - 5.8: Testing
 - 5.9: Error Handling
