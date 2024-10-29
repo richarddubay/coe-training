@@ -139,7 +139,7 @@
 // Step 5 - Lesson 5 Part 4 - Auth Middleware
 import express, { Request, Response } from "express";
 import cors from "cors";
-import { comicBookRouter } from "./routers";
+import { accountRouter, authRouter, comicBookRouter } from "./routers";
 import swaggerJsDoc from "swagger-jsdoc";
 import swaggerUi from "swagger-ui-express";
 import { authMiddleware } from "./middleware/auth";
@@ -174,9 +174,15 @@ app.get("/", (req: Request, res: Response) => {
   res.send("Hello World!");
 });
 
+app.use("/auth", authRouter);
+
 // app.use(testMiddleware);
 app.use(authMiddleware);
 
+/* Account */
+app.use("/account", accountRouter);
+
+/* Comic Books */
 app.use("/comic_books", comicBookRouter);
 // app.use("/comic_books", authMiddleware, comicBookRouter);
 
