@@ -2,6 +2,40 @@ import { Request, Response } from "express";
 import { accountModel } from "../models";
 import { generateAccessToken } from "../utils/auth";
 import bcrypt from "bcryptjs";
+import { prisma } from "../utils/prisma";
+
+const postSignIn = async (req: Request, res: Response) => {
+  try {
+    // Get the email and password
+    const { identifier, password } = req.body;
+
+    // Get the account from their email
+    const account = await prisma.account.findUnique({
+      where: {
+        identifier: identifier,
+      },
+    });
+
+    // If there is an account, check its password.
+    // If the password matches, generate an access token for them (sign them in).
+    // If the password doesn't match, return a 404.
+    if (account) {
+      const passwordMatch = await bcrypt.compare(password, account.password);
+      if (passwordMatch) {
+        const accessToken = await generateAccessToken(account.id);
+        return res.status(200).json({ accessToken });
+      }
+    }
+    return res
+      .status(404)
+      .send("Account identifier or password was incorrect.");
+  } catch (error) {
+    res.status(500).json({
+      message: `There was an error signing in: ${error}`,
+      error,
+    });
+  }
+};
 
 const postSignUp = async (req: Request, res: Response) => {
   try {
@@ -28,4 +62,4 @@ const postSignUp = async (req: Request, res: Response) => {
   }
 };
 
-export { postSignUp };
+export { postSignIn, postSignUp };

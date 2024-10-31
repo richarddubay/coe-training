@@ -40,11 +40,11 @@ export { getComicBooks };
 ```
 
 - In general, we want to prefix our functions with the HTTP verb and then the name of the entity and then maybe a qualifier. So, `getComicBooks` will get all comic books. `postComicBook` will create a comic book in the system. `getComicBookById` will get a specific comic book based on the `id`. You get the idea. You'll see this pattern in a lot of APIs.
-- Unlike the `routers` folder, we do not have to use a barrel route here to do our exporting. We used the barrel file in `routers` we'll end up needing to import those items into other places (like tests). But we won't need to do that for the controllers. We're only going to be importing each specific controller into the specific router.
+- Unlike the `routers` folder, we do not have to use a barrel route here to do our exporting. We used the barrel file in `routers` because we'll end up needing to import those items into other places (like tests). But we won't need to do that for the controllers. We're only going to be importing each specific controller into the specific router.
 - So next, we want to go back to our `routers` entity file and import the controller we just made. You can do this two ways:
   - `import * as comicBookController from "../controllers/comic_books";`
   - `import { getComicBooks } from "../controllers/comic_books";`
-- Now, I'm a guy that likes everything to name everything and not have a lot of dot notation all over my app, so I personally prefer the second way, but it literally doesn't matter. Choose whichever way makes you happy.
+- Now, I'm a guy that likes to name everything and not have a lot of dot notation all over my app, so I personally prefer the second way, but it literally doesn't matter. Choose whichever way makes you happy.
 - Depending on which way you chose just now, you can then update your `get` function to either use `comicBookController.getComicBooks` or just `getComicBooks`. These would look like:
   - `router.route("/").get(comicBookController.getComicBooks);`
   - `router.route("/").get(getComicBooks);`

@@ -58,16 +58,16 @@ import { Router } from "express";
  */
 const router = Router();
 
-// POST: Sign up a player (add)
+// POST: Sign up a person (add)
 /**
  * @openapi
  * /signup:
  *   post:
- *     description: Creates a new player.
+ *     description: Creates a new account.
  *     tags: [Auth]
  *     responses:
  *       201:
- *         description: Returns the JSON info for the created player.
+ *         description: Returns the JSON info for the created account.
  *       500:
  *         description: Returns error information if the API calls fails.
  */
@@ -175,9 +175,9 @@ Now, before we move on to creating the account, let's test what we have.
 
 ```
 {
-    "first_name": "Steve",
-    "last_name": "Yzerman",
-    "identifier": "steviey@detroitredwings.com",
+    "first_name": "Tony",
+    "last_name": "Stark",
+    "identifier": "ironman@marvel.com",
     "password": "password"
 }
 ```
@@ -214,6 +214,8 @@ const accessToken = await generateAccessToken(account.id);
 
 Side note: We created the `generateAccessToken` function a while back when we talked about middleware. Essentially we just pass it an `id` and it creates a JWT using that `id` and the secret key. We also set the expiration date of that JWT to 1 day.
 
+Side note #2: You've probably already realized this, but by generating an access token here, we are effectively signing the person in when they create the account. You can, of course, hold off on doing this part and force the person to actually sign in as a separate step if you wanted to.
+
 Last but not least, we need to change the code under `Step 5` once again. This time, replace `account` with `accessToken`.
 
 There. We're all done. Now when you run the endpoint you should get back a JWT.
@@ -223,7 +225,115 @@ If you try to create an account with the same email more than once you will get 
 
 ### Sign In
 
+Now that we can sign up, it just makes sense that we should be able to sign in, right? So how do we do that?
+
+#### Auth Route
+
+We're basically just going to follow the same pattern as we did for the `/signup` route. So the first step will be to add a `/signin` route to our auth router. We'll make this with a test route again first to make sure it works, then we'll add in the `postSignIn` auth controller and get that working.
+
+Back in our `auth.ts` route file, let's add the code we need for our test `/signin` route:
+
+```
+// POST: Sign in a person
+/**
+ * @openapi
+ * /signin:
+ *   post:
+ *     description: Signs in a person.
+ *     tags: [Auth]
+ *     responses:
+ *       201:
+ *         description: Returns the JSON info for the signed in account.
+ *       500:
+ *         description: Returns error information if the API calls fails.
+ */
+router.route("/signin").post((req, res) => {
+  res.status(201).send("Signin successful");
+});
+```
+
+Now if we run the app and test the `/auth/signin` route (make sure we're doing a `POST` request), we should get the "Signin successful" message.
+
+#### Sidebar
+
+Let's talk about what it is that we need to do in order to sign in. Basically we'll need to follow the following steps:
+
+- Get the email and password from the request body.
+- Use that email to get the account info.
+- If there is an account, we need to check the password to make sure it matches.
+  - If so, we need to generate an access token for them so that they can be considered "signed in."
+  - If not, we need to return a 404.
+
+#### Auth Controller
+
+The next step then is to create our `postSignIn` auth controller. This will handle all the stuff we just talked about. So inside our `auth.ts` file in the `/controllers` folder, let's paste the following:
+
+```
+const postSignIn = async (req: Request, res: Response) => {
+  try {
+    // Get the email and password
+    const { identifier, password } = req.body;
+
+    // Get the account from their email
+    const account = await prisma.account.findUnique({
+      where: {
+        identifier: identifier,
+      },
+    });
+
+    // If there is an account, check its password.
+    // If the password matches, generate an access token for them (sign them in).
+    // If the password doesn't match, return a 404.
+    if (account) {
+      const passwordMatch = await bcrypt.compare(password, account.password);
+      if (passwordMatch) {
+        const accessToken = await generateAccessToken(account.id);
+        return res.status(200).json({ accessToken });
+      }
+    }
+    return res
+      .status(404)
+      .send("Account identifier or password was incorrect.");
+  } catch (error) {
+    res.status(500).json({
+      message: `There was an error signing in: ${error}`,
+      error,
+    });
+  }
+};
+```
+
+Highlights:
+
+- We get the email (identifier) and password from the request body.
+- We use the email address to query our `account` model for the account.
+- If there is an account, we check the password using the `bcrypt.compare()` function. To that function we pass the password that came in on the request and the password from the account itself and see if they match.
+- If we have a match, we generate a JWT and send that token back to the client.
+- If we don't, we send back a 404.
+
+#### One Last Update
+
+The last thing to do is to update the auth router (`/routers/auth.ts`) to use the auth controller. Let's change the `router.route` section for the `/signin` route to be:
+
+```
+router.route("/signin").post(postSignIn);
+```
+
+Then let's test it. On the body of the `/signin` request, let's add the following:
+
+```
+{
+  "identifier": "ironman@marvel.com",
+  "password": "password"
+}
+```
+
+If the request is successful, you should get a 200 response and a JWT returned to you.
+
+---
+
+That's it! We should now be able to sign up and sign in like superheroes!
+
 ## Homework
 
 - Continue to work on anything that we've already covered if needed.
-- Expand on auth. Make sure auth is working as it should across the board.

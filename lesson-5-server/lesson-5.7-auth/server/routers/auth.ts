@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { postSignUp } from "../controllers/auth";
+import { postSignIn, postSignUp } from "../controllers/auth";
 
 /**
  * @swagger
@@ -8,6 +8,24 @@ import { postSignUp } from "../controllers/auth";
  *   description: Auth routes
  */
 const router = Router();
+
+// POST: Sign in a person
+/**
+ * @openapi
+ * /signin:
+ *   post:
+ *     description: Signs in a person.
+ *     tags: [Auth]
+ *     responses:
+ *       201:
+ *         description: Returns the JSON info for the signed in account.
+ *       500:
+ *         description: Returns error information if the API calls fails.
+ */
+// router.route("/signin").post((req, res) => {
+//   res.status(201).send("Signin successful");
+// });
+router.route("/signin").post(postSignIn);
 
 // POST: Sign up a player (add)
 /**
