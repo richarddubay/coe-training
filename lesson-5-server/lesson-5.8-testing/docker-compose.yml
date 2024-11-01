@@ -1,0 +1,37 @@
+# Step 1: Just define the database service
+# services:
+#   db:
+#     image: postgres:latest
+#     restart: always
+#     ports:
+#       - 5433:5432
+#     environment:
+#       POSTGRES_DB: comic_book_store_db
+#       POSTGRES_USER: postgres
+#       POSTGRES_PASSWORD: password
+#     volumes:
+#       - db:/var/lib/postgresql/data
+# volumes:
+#   db:
+# Step 2: Add in the Flyway service
+services:
+  db:
+    image: postgres:latest
+    restart: always
+    ports:
+      - 5433:5432
+    environment:
+      POSTGRES_DB: comic_book_store_db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+    volumes:
+      - db:/var/lib/postgresql/data
+  flyway:
+    image: flyway/flyway
+    command: -url=jdbc:postgresql://db/comic_book_store_db -schemas=public -user=postgres -password=password -connectRetries=5 migrate -validateMigrationNaming=true -X
+    volumes:
+      - ./database:/flyway/sql
+    depends_on:
+      - db
+volumes:
+  db:

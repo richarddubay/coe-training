@@ -14,7 +14,6 @@ This is a repo for all of the training material for the D&D Center of Excellence
 
 ## Still To Do
 
-- 5.8: Testing
 - 5.9: Error Handling
 - 5.10: Deployment (to AWS, including Github Actions and Lightsail)
 - 6: Front End
