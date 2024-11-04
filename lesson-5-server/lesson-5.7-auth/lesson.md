@@ -220,8 +220,10 @@ Last but not least, we need to change the code under `Step 5` once again. This t
 
 There. We're all done. Now when you run the endpoint you should get back a JWT.
 
-**NOTE**
-If you try to create an account with the same email more than once you will get an error. In our instance, we set the email address to be a unique identifier when we created the table field, so you can't have more than one account with the same email address.
+**NOTES**
+
+- If you try to create an account with the same email more than once you will get an error. In our instance, we set the email address to be a unique identifier when we created the table field, so you can't have more than one account with the same email address.
+- When we get to the front end of our project, we'll want to remember that there are going to be certain routes that we want to be signed in for (like a `/profile` page, for example). We will have to check the JWT that we get back from the API against the known data we have for the user to make sure that they match before serving them an authenticated page. Just because we _have_ a JWT in storage or on the session or context doesn't mean that it's the _right_ token.
 
 ### Sign In
 

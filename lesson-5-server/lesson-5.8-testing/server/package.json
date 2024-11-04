@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "dev": "nodemon index.ts",
+    "dev:tsx": "tsx index.ts",
     "prisma:generate": "prisma generate",
     "prisma:pull": "prisma db pull",
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -24,6 +25,7 @@
     "nodemon": "^3.1.4",
     "prisma": "^5.21.1",
     "ts-node": "^10.9.2",
+    "tsx": "^4.19.2",
     "typescript": "^5.5.4"
   },
   "dependencies": {
