@@ -57,6 +57,29 @@ Which I feel is a pretty apropos sentiment.
 
 Alright, enough theory. Let's dig in and write some tests, shall we?
 
+unit tests:
+jest
+jest-when
+controllers/handlers
+
+integration tests:
+supertest
+testcontainers
+responses and response codes and validation
+
+test reporters:
+jest-junit
+
+describe all tests
+nested describes
+"it should" ...
+make sure you test the response codes
+
+AAA Approach
+Arrange, Act, Assert
+
+Github Actions
+
 ## Homework
 
 - Continue to work on anything that we've already covered if needed.
