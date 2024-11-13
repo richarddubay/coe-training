@@ -97,7 +97,7 @@
 // import { comicBookRouter } from "./routers";
 // import swaggerJsDoc from "swagger-jsdoc";
 // import swaggerUi from "swagger-ui-express";
-// import { testMiddleware } from "./middleware/test";
+// import { exampleMiddleware } from "./middleware/example";
 
 // const app = express();
 // app.use(express.json());
@@ -129,10 +129,10 @@
 //   res.send("Hello World!");
 // });
 
-// // app.use(testMiddleware);
+// // app.use(exampleMiddleware);
 
 // // app.use("/comic_books", comicBookRouter);
-// app.use("/comic_books", testMiddleware, comicBookRouter);
+// app.use("/comic_books", exampleMiddleware, comicBookRouter);
 
 // export default app;
 

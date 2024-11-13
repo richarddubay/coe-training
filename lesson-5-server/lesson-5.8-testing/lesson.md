@@ -57,6 +57,70 @@ Which I feel is a pretty apropos sentiment.
 
 Alright, enough theory. Let's dig in and write some tests, shall we?
 
+#### Unit Test Setup
+
+Before we can begin writing tests for _anything_, we need to get our whole testing situation set up. We're going to be writing two different kinds of tests: unit and integration. Unit tests for `models` and `controllers` and integration tests for our `routers`.
+
+For our unit tests, we'll need to install three packages: `jest`, `jest-when`, and `ts-jest`. We'll install these as dev dependencies.
+
+- `jest` (https://github.com/jestjs/jest): `jest` is a comprehensive test suite used in the majority of JavaScript projects. We can install it using `npm i --save-dev jest`.
+- `jest-when` (https://github.com/timkindberg/jest-when): `jest-when` is a package used to set the return value of mocked functions based on the parameters passed to the functions. We can install it using `npm i --save-dev jest-when`.
+- `ts-jest` (https://github.com/kulshekhar/ts-jest): `ts-jest` is simply a Jest transformer that allows Jest to run in TypeScript projects. We can install it using `npm i --save-dev ts-jest`.
+
+We'll also need to install the types for Jest, so let's do that with: `npm i --save-dev @types/jest`
+
+Here in the setup, let's go ahead and create `__tests__` folders in each of out `models`, `contollers`, and `routers` folders. This will prepare us for when we create the actual test files.
+
+The next thing we'll need is a Jest configuration file. So, in the root of the `/server` folder, let's create a `jest.config.ts` file and paste in the following code:
+
+```
+/** @type {import('ts-jest').JestConfigWithTsJest} */
+module.exports = {
+  clearMocks: true,
+  fakeTimers: {
+    enableGlobally: true,
+  },
+  preset: "ts-jest",
+  testEnvironment: "node",
+};
+```
+
+Basically we're just setting up some stuff that Jest needs here in order to test our TypeScript files. We're telling Jest to clear any mocks after each test, allow fake timers, to use `ts-jest` for transpiling our TypeScript code, and to allow our tests to simulate a NodeJS environment.
+
+Next, in the `/server` folder, create a new folder called `test-utils` and create a `prisma.ts` file inside of it. In that `prisma.ts` file, paste the following code:
+
+```
+import { prisma } from "../utils/prisma";
+
+const prismaForTests = prisma as any;
+
+export { prismaForTests };
+```
+
+We're going to use a combination of `prisma` and `prismaForTests` in our actual tests. All `prismaForTests` does is redefine `prisma` as an `any` type. This is typically frowned upon, but in this case, we'll need it. We're going to mock some of the Prisma functions as they relate specifically to an entity, and if we don't re-type this as `any` we'll run into some pretty nasty TypeScript errors and, in this particular case, we want y'all to be able to write tests, not fight with TypeScript.
+
+#### Models
+
+Let's start with some unit tests, specifically for our models. For
+
+#### Controllers
+
+Unit tests for controllers.
+
+#### Github Actions
+
+Set up Github actions for server unit tests.
+
+#### Routers
+
+Integration tests for routers.
+
+#### Github Actions
+
+Set up Github actions for server integration tests.
+
+**\*\*\*** Need to go back and add a lesson for adding Github actions for verifying our database and schema. **\*\*\***
+
 unit tests:
 jest
 jest-when

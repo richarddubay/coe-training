@@ -26,33 +26,33 @@ So for example, if we added an auth middleware and placed all of our routes belo
 Let's create a simple example to see this at work before we dig into something more significant (like that auth middleware we've mentioned).
 
 - First, in your `server` folder, create a new `middleware` folder.
-- Then, create a new file named `test.ts`.
+- Then, create a new file named `example.ts`.
 - In that file, let's put the following code:
 
 ```
 import { NextFunction, Request, Response } from "express";
 
-export async function testMiddleware(
+export async function exampleMiddleware(
   req: Request,
   res: Response,
   next: NextFunction
 ) {
-  return res.status(200).send("Used the test middleware");
+  return res.status(200).send("Used the example middleware");
 }
 ```
 
-_All this does is return a 200 status with a message that says "Used the test middleware". Now, this isn't something you would normally do. This makes no sense. But it's a good example of how a middleware functions._
+_All this does is return a 200 status with a message that says "Used the example middleware". Now, this isn't something you would normally do. This makes no sense. But it's a good example of how a middleware functions._
 
 - Now in your `app.ts` file, let's import this new middleware:
 
 ```
-import { testMiddleware } from "./middleware/test";
+import { exampleMiddleware } from "./middleware/example";
 ```
 
 - Then down before you make any of your route calls, let's add this:
 
 ```
-app.use(testMiddleware);
+app.use(exampleMiddleware);
 ```
 
 - Save that.
@@ -63,9 +63,9 @@ So you can see that's where the call to the middleware happens matters. Routes a
 
 ## Using Middleware with Specific Routes
 
-There is also a way to add a middleware to a specific route. To do that, instead of doing `app.use(whateverRoute)` you would do `whateverRoute.use(middleware)`.
+There is also a way to add a middleware to a specific route. To do that, instead of doing `app.use(whateverRoute)` you would add an extra parameter to your `app.use` call that specifies the middleware to use.
 
-To see this in action, we could type out something like `app.use("/comic_books", testMiddleware, comicBookRouter)` and we should still get the same behavior as before.
+To see this in action, we could type out something like `app.use("/comic_books", exampleMiddleware, comicBookRouter)` and we should still get the same behavior as before.
 
 ## Auth Middleware
 
