@@ -13,7 +13,7 @@ describe("Comic Books Model", () => {
         title: "Avengers",
         issue_number: 1,
         publisher_id: 2,
-        published_date: "2018-05-02",
+        published_date: new Date("2018-05-02"),
         created_at: new Date(),
         updated_at: null,
         deleted_at: null,
@@ -38,133 +38,148 @@ describe("Comic Books Model", () => {
     });
   });
 
-  // describe("getAllTeams", () => {
-  //   it("should get all teams", async () => {
-  //     // Arrange
-  //     const teams = [
-  //       {
-  //         id: 1,
-  //         team_name: "Team Doobie",
-  //         created_at: new Date(),
-  //         updated_at: null,
-  //         deleted_at: null,
-  //       },
-  //       {
-  //         id: 2,
-  //         team_name: "Team Doobie Two",
-  //         created_at: new Date(),
-  //         updated_at: null,
-  //         deleted_at: null,
-  //       },
-  //     ];
-  //     prismaForTests.team = {
-  //       findMany: jest.fn().mockResolvedValue(teams),
-  //     };
+  describe("getAllComicBooks", () => {
+    it("should get all comic books", async () => {
+      // Arrange
+      const comic_books = [
+        {
+          id: 1,
+          title: "Avengers",
+          issue_number: 1,
+          publisher_id: 2,
+          published_date: new Date("2018-05-02"),
+          created_at: new Date(),
+          updated_at: null,
+          deleted_at: null,
+        },
+        {
+          id: 2,
+          title: "Batman",
+          issue_number: 1,
+          publisher_id: 1,
+          published_date: new Date("2016-06-15"),
+          created_at: new Date(),
+          updated_at: null,
+          deleted_at: null,
+        },
+      ];
+      prismaForTests.comic_books = {
+        findMany: jest.fn().mockResolvedValue(comic_books),
+      };
 
-  //     // Act
-  //     const result = await teamsModel.getAllTeams();
+      // Act
+      const result = await comicBookModel.getAllComicBooks();
 
-  //     // Assert
-  //     expect(prisma.team.findMany).toHaveBeenCalledTimes(1);
-  //     expect(prisma.team.findMany).toHaveBeenCalledWith(
-  //       expect.objectContaining({
-  //         orderBy: {
-  //           id: "asc",
-  //         },
-  //       })
-  //     );
-  //     expect(result).toEqual(teams);
-  //   });
-  // });
+      // Assert
+      expect(prisma.comic_books.findMany).toHaveBeenCalledTimes(1);
+      expect(prisma.comic_books.findMany).toHaveBeenCalledWith(
+        expect.objectContaining({
+          orderBy: {
+            id: "asc",
+          },
+        })
+      );
+      expect(result).toEqual(comic_books);
+    });
+  });
 
-  // describe("getTeamById", () => {
-  //   it("should get a team by id", async () => {
-  //     // Arrange
-  //     const team = {
-  //       id: 1,
-  //       team_name: "Team Doobie",
-  //       created_at: new Date(),
-  //       updated_at: null,
-  //       deleted_at: null,
-  //     };
-  //     prismaForTests.team = {
-  //       findUnique: jest.fn().mockResolvedValue(team),
-  //     };
+  describe("getComicBookById", () => {
+    it("should get a comic book by id", async () => {
+      // Arrange
+      const comic_book = {
+        id: 1,
+        title: "Avengers",
+        issue_number: 1,
+        publisher_id: 2,
+        published_date: new Date("2018-05-02"),
+        created_at: new Date(),
+        updated_at: null,
+        deleted_at: null,
+      };
+      prismaForTests.comic_books = {
+        findUnique: jest.fn().mockResolvedValue(comic_book),
+      };
 
-  //     // Act
-  //     const result = await teamsModel.getTeamById(1);
+      // Act
+      const result = await comicBookModel.getComicBookById(1);
 
-  //     // Assert
-  //     expect(prisma.team.findUnique).toHaveBeenCalledTimes(1);
-  //     expect(prisma.team.findUnique).toHaveBeenCalledWith(
-  //       expect.objectContaining({
-  //         where: {
-  //           id: 1,
-  //         },
-  //       })
-  //     );
-  //     expect(result).toEqual(team);
-  //   });
-  // });
+      // Assert
+      expect(prisma.comic_books.findUnique).toHaveBeenCalledTimes(1);
+      expect(prisma.comic_books.findUnique).toHaveBeenCalledWith(
+        expect.objectContaining({
+          where: {
+            id: 1,
+          },
+        })
+      );
+      expect(result).toEqual(comic_book);
+    });
+  });
 
-  // describe("postTeam", () => {
-  //   it("should create a team", async () => {
-  //     // Arrange
-  //     const team = {
-  //       id: 1,
-  //       team_name: "Team Doobie",
-  //       created_at: new Date(),
-  //       updated_at: null,
-  //       deleted_at: null,
-  //     };
-  //     prismaForTests.team = {
-  //       create: jest.fn().mockResolvedValue(team),
-  //     };
+  describe("postComicBook", () => {
+    it("should create a comic book", async () => {
+      // Arrange
+      const comicBook = {
+        id: 1,
+        title: "Avengers",
+        issue_number: 1,
+        publisher_id: 2,
+        published_date: new Date("2018-05-02"),
+        created_at: new Date(),
+        updated_at: null,
+        deleted_at: null,
+      };
+      prismaForTests.comic_books = {
+        create: jest.fn().mockResolvedValue(comicBook),
+      };
 
-  //     // Act
-  //     const result = await teamsModel.postTeam(team);
+      // Act
+      const result = await comicBookModel.postComicBook(comicBook);
 
-  //     // Assert
-  //     expect(prisma.team.create).toHaveBeenCalledTimes(1);
-  //     expect(prisma.team.create).toHaveBeenCalledWith(
-  //       expect.objectContaining({
-  //         data: {
-  //           ...team,
-  //           created_at: new Date(),
-  //         },
-  //       })
-  //     );
-  //     expect(result).toEqual(team);
-  //   });
-  // });
+      // Assert
+      expect(prisma.comic_books.create).toHaveBeenCalledTimes(1);
+      expect(prisma.comic_books.create).toHaveBeenCalledWith(
+        expect.objectContaining({
+          data: {
+            ...comicBook,
+            created_at: new Date(),
+          },
+        })
+      );
+      expect(result).toEqual(comicBook);
+    });
+  });
 
-  // describe("putTeam", () => {
-  //   it("should update a team", async () => {
-  //     // Arrange
-  //     const team = {
-  //       team_name: "Team Doobie",
-  //     };
-  //     prismaForTests.team = {
-  //       update: jest.fn().mockResolvedValue(team),
-  //     };
+  describe("putComicBook", () => {
+    it("should update a comic book", async () => {
+      // Arrange
+      const comicBook = {
+        title: "Avengers",
+        issue_number: 1,
+        publisher_id: 2,
+        published_date: new Date("2018-05-02"),
+      };
+      prismaForTests.comic_books = {
+        update: jest.fn().mockResolvedValue(comicBook),
+      };
 
-  //     // Act
-  //     const result = await teamsModel.putTeam(1, team);
+      // Act
+      const result = await comicBookModel.putComicBook(1, comicBook);
 
-  //     // Assert
-  //     expect(prisma.team.update).toHaveBeenCalledTimes(1);
-  //     expect(prisma.team.update).toHaveBeenCalledWith(
-  //       expect.objectContaining({
-  //         where: {
-  //           id: 1,
-  //         },
-  //         data: {
-  //           ...team,
-  //           updated_at: new Date(),
-  //         },
-  //       })
-  //     );
-  //     expect(result).toEqual(team);
-  //   });
-  // });
+      // Assert
+      expect(prisma.comic_books.update).toHaveBeenCalledTimes(1);
+      expect(prisma.comic_books.update).toHaveBeenCalledWith(
+        expect.objectContaining({
+          where: {
+            id: 1,
+          },
+          data: {
+            ...comicBook,
+            updated_at: new Date(),
+          },
+        })
+      );
+      expect(result).toEqual(comicBook);
+    });
+  });
 });

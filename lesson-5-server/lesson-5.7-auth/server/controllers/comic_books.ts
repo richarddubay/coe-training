@@ -61,11 +61,8 @@ const deleteComicBook = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
     const numericId = parseInt(id);
-    const comicBook = await prisma.comic_books.findUnique({
-      where: {
-        id: numericId,
-      },
-    });
+    const comicBook = await comicBookModel.getComicBookById(numericId);
+
     if (comicBook) {
       const deletedComicBook = await comicBookModel.deleteComicBook(numericId);
       res.status(204).json({

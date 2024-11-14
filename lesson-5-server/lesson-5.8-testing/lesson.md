@@ -66,10 +66,30 @@ For our unit tests, we'll need to install three packages: `jest`, `jest-when`, a
 - `jest` (https://github.com/jestjs/jest): `jest` is a comprehensive test suite used in the majority of JavaScript projects. We can install it using `npm i --save-dev jest`.
 - `jest-when` (https://github.com/timkindberg/jest-when): `jest-when` is a package used to set the return value of mocked functions based on the parameters passed to the functions. We can install it using `npm i --save-dev jest-when`.
 - `ts-jest` (https://github.com/kulshekhar/ts-jest): `ts-jest` is simply a Jest transformer that allows Jest to run in TypeScript projects. We can install it using `npm i --save-dev ts-jest`.
+- `jest-junit` (https://github.com/jest-community/jest-junit): `jest-junit` is a Jest reporter that allows Jest to generate JUnit XML test results. This isn't as helpful to us here locally, but it will be a good thing when we hook this up to our Github Actions. We will get much better test reporting in our CI environment. We can install it using `npm i --save-dev jest-junit`.
 
-We'll also need to install the types for Jest, so let's do that with: `npm i --save-dev @types/jest`
+In our `package.json` file, we'll need to add some configuration options for `jest-junit` as well. Right under the `scripts` section, add the following:
 
-Here in the setup, let's go ahead and create `__tests__` folders in each of out `models`, `contollers`, and `routers` folders. This will prepare us for when we create the actual test files.
+```
+"jest-junit": {
+  "outputDirectory": "reports",
+  "outputName": "jest-junit.xml",
+  "ancestorSeparator": " › ",
+  "uniqueOutputName": "false",
+  "suiteNameTemplate": "{filepath}",
+  "classNameTemplate": "{classname}",
+  "titleTemplate": "{title}"
+},
+```
+
+Basically all we're doing here is telling Jest to create a `reports` folder in the root of our `/server` folder and create a `jest-junit.xml` file in that folder. Then we're going to tell Jest to use that file as the output for our test results.
+
+We'll also need to install the types for `jest` and `jest-when`. We can do that with the following two commands:
+
+- `npm i --save-dev @types/jest`
+- `npm i --save-dev @types/jest-when`
+
+While we're here in setup mode, let's go ahead and create `__tests__` folders in each of out `models`, `contollers`, and `routers` folders. This will prepare us for when we create the actual test files.
 
 The next thing we'll need is a Jest configuration file. So, in the root of the `/server` folder, let's create a `jest.config.ts` file and paste in the following code:
 
@@ -99,15 +119,523 @@ export { prismaForTests };
 
 We're going to use a combination of `prisma` and `prismaForTests` in our actual tests. All `prismaForTests` does is redefine `prisma` as an `any` type. This is typically frowned upon, but in this case, we'll need it. We're going to mock some of the Prisma functions as they relate specifically to an entity, and if we don't re-type this as `any` we'll run into some pretty nasty TypeScript errors and, in this particular case, we want y'all to be able to write tests, not fight with TypeScript.
 
-#### Models
+#### One More Thing - AAA
+We're going to follow the AAA pattern in our tests. This is a common pattern in testing and it means you're writing tests in a way that makes it easy for other people to read your tests. The AAA pattern is:
 
-Let's start with some unit tests, specifically for our models. For
+- Arrange
+- Act
+- Assert
+
+The first thing we're going to do is set up our data for our tests. That's the "Arrange" part. Then we'll "Act" on that data by calling the function we're testing, and finally we'll "Assert" that the function did what we expected it to do.
+
+#### Models
+Finally, let's start writing our tests. We'll start with models.
+
+In your `/models/__tests__` folder, create a new file called `comic_books.test.ts` and paste in the following code:
+
+```
+import { comicBookModel } from "..";
+import { prismaForTests } from "../../test-utils/prisma";
+import { prisma } from "../../utils/prisma";
+
+jest.mock("@prisma/client");
+
+describe("Comic Books Model", () => {
+  describe("deleteComicBook", () => {
+    it("should delete a comic book", async () => {
+      // Arrange
+      const comic_book = {
+        id: 1,
+        title: "Avengers",
+        issue_number: 1,
+        publisher_id: 2,
+        published_date: "2018-05-02",
+        created_at: new Date(),
+        updated_at: null,
+        deleted_at: null,
+      };
+      prismaForTests.comic_books = {
+        delete: jest.fn().mockResolvedValue(comic_book),
+      };
+
+      // Act
+      const result = await comicBookModel.deleteComicBook(1);
+
+      // Assert
+      expect(prisma.comic_books.delete).toHaveBeenCalledTimes(1);
+      expect(prisma.comic_books.delete).toHaveBeenCalledWith(
+        expect.objectContaining({
+          where: {
+            id: 1,
+          },
+        })
+      );
+      expect(result).toEqual(comic_book);
+    });
+  });
+});
+```
+
+You've probably seen this pattern before. We use "describe" and "it" declarations to lay out our tests. We have an outer `describe` that wraps the whole suite of tests and then an inner `describe` that we will use for each major piece. Inside that `describe` we declare what "it" (the test) should do. Then inside the `it` we `arrange` our data (in this case we just create a comic book), `act` on the data (in this case we want to test the ability to delete a comic book), and then we `assert` that the delete function was actually called and make sure it was called with the right arguments.
+
+To run these tests, we'll have to update our `package.json` file to include a few new scripts:
+
+```
+"test": "jest",
+"test:unit": "jest --testPathIgnorePatterns ./routers/ --ci --reporters=default --reporters=jest-junit",
+"test:unit:watch": "jest --watch --testPathIgnorePatterns ./routers/"
+```
+
+What do we have here? Why three different commands? Let's break them down:
+
+- `test`: This is the command that we use to run all our tests.
+- `test:unit`: This is the command that we use to run all our unit tests. We tell this command to ignore any tests that are in the `routers` folder. These will be integration tests, so we don't want them to run here. We also are telling Jest to spit out the results of the tests using a `jest-junit` reporter. We'll set that up in just a moment.
+- `test:unit:watch`: This is the command that we use to run all our unit tests and watch for changes. This command will continue to run tests as we make changes to our code.
+
+Let's go to the command line and see what happens. In your terminal, inside the `/server` directory, run `npm run test`. Hopefully we get a passing test. If we had more than one test anywhere this command would run them all.
+
+Now we want to run the unit tests only. To do that, let's run the `npm run test:unit` command. This runs only the unit tests and stops. What you will see is that a `reports` folder has been created inside of the `/server` directory. Inside of that folder is a `jest-junit.xml` file. This file contains all of the test results.
+
+Lastly, let's run `npm run test:unit:watch`. The difference here is that this will continue to run unit tests as we make changes to our code. Also this command _does not_ write to the `reports` folder like the other unit test specific command did.
+
+Now that we've got through all of those, we'll need to finish up the rest of the model tests for this entity. They should pretty much follow the same pattern as the one we already wrote. Just make the adjustments where they need to be made to test the `get all`, `get one`, `create`, and `update` functions. When you're done, the file should look pretty similar to this:
+
+```
+import { comicBookModel } from "..";
+import { prismaForTests } from "../../test-utils/prisma";
+import { prisma } from "../../utils/prisma";
+
+jest.mock("@prisma/client");
+
+describe("Comic Books Model", () => {
+  describe("deleteComicBook", () => {
+    it("should delete a comic book", async () => {
+      // Arrange
+      const comic_book = {
+        id: 1,
+        title: "Avengers",
+        issue_number: 1,
+        publisher_id: 2,
+        published_date: new Date("2018-05-02"),
+        created_at: new Date(),
+        updated_at: null,
+        deleted_at: null,
+      };
+      prismaForTests.comic_books = {
+        delete: jest.fn().mockResolvedValue(comic_book),
+      };
+
+      // Act
+      const result = await comicBookModel.deleteComicBook(1);
+
+      // Assert
+      expect(prisma.comic_books.delete).toHaveBeenCalledTimes(1);
+      expect(prisma.comic_books.delete).toHaveBeenCalledWith(
+        expect.objectContaining({
+          where: {
+            id: 1,
+          },
+        })
+      );
+      expect(result).toEqual(comic_book);
+    });
+  });
+
+  describe("getAllComicBooks", () => {
+    it("should get all comic books", async () => {
+      // Arrange
+      const comic_books = [
+        {
+          id: 1,
+          title: "Avengers",
+          issue_number: 1,
+          publisher_id: 2,
+          published_date: new Date("2018-05-02"),
+          created_at: new Date(),
+          updated_at: null,
+          deleted_at: null,
+        },
+        {
+          id: 2,
+          title: "Batman",
+          issue_number: 1,
+          publisher_id: 1,
+          published_date: new Date("2016-06-15"),
+          created_at: new Date(),
+          updated_at: null,
+          deleted_at: null,
+        },
+      ];
+      prismaForTests.comic_books = {
+        findMany: jest.fn().mockResolvedValue(comic_books),
+      };
+
+      // Act
+      const result = await comicBookModel.getAllComicBooks();
+
+      // Assert
+      expect(prisma.comic_books.findMany).toHaveBeenCalledTimes(1);
+      expect(prisma.comic_books.findMany).toHaveBeenCalledWith(
+        expect.objectContaining({
+          orderBy: {
+            id: "asc",
+          },
+        })
+      );
+      expect(result).toEqual(comic_books);
+    });
+  });
+
+  describe("getComicBookById", () => {
+    it("should get a comic book by id", async () => {
+      // Arrange
+      const comic_book = {
+        id: 1,
+        title: "Avengers",
+        issue_number: 1,
+        publisher_id: 2,
+        published_date: new Date("2018-05-02"),
+        created_at: new Date(),
+        updated_at: null,
+        deleted_at: null,
+      };
+      prismaForTests.comic_books = {
+        findUnique: jest.fn().mockResolvedValue(comic_book),
+      };
+
+      // Act
+      const result = await comicBookModel.getComicBookById(1);
+
+      // Assert
+      expect(prisma.comic_books.findUnique).toHaveBeenCalledTimes(1);
+      expect(prisma.comic_books.findUnique).toHaveBeenCalledWith(
+        expect.objectContaining({
+          where: {
+            id: 1,
+          },
+        })
+      );
+      expect(result).toEqual(comic_book);
+    });
+  });
+
+  describe("postComicBook", () => {
+    it("should create a comic book", async () => {
+      // Arrange
+      const comicBook = {
+        id: 1,
+        title: "Avengers",
+        issue_number: 1,
+        publisher_id: 2,
+        published_date: new Date("2018-05-02"),
+        created_at: new Date(),
+        updated_at: null,
+        deleted_at: null,
+      };
+      prismaForTests.comic_books = {
+        create: jest.fn().mockResolvedValue(comicBook),
+      };
+
+      // Act
+      const result = await comicBookModel.postComicBook(comicBook);
+
+      // Assert
+      expect(prisma.comic_books.create).toHaveBeenCalledTimes(1);
+      expect(prisma.comic_books.create).toHaveBeenCalledWith(
+        expect.objectContaining({
+          data: {
+            ...comicBook,
+            created_at: new Date(),
+          },
+        })
+      );
+      expect(result).toEqual(comicBook);
+    });
+  });
+
+  describe("putComicBook", () => {
+    it("should update a comic book", async () => {
+      // Arrange
+      const comicBook = {
+        title: "Avengers",
+        issue_number: 1,
+        publisher_id: 2,
+        published_date: new Date("2018-05-02"),
+      };
+      prismaForTests.comic_books = {
+        update: jest.fn().mockResolvedValue(comicBook),
+      };
+
+      // Act
+      const result = await comicBookModel.putComicBook(1, comicBook);
+
+      // Assert
+      expect(prisma.comic_books.update).toHaveBeenCalledTimes(1);
+      expect(prisma.comic_books.update).toHaveBeenCalledWith(
+        expect.objectContaining({
+          where: {
+            id: 1,
+          },
+          data: {
+            ...comicBook,
+            updated_at: new Date(),
+          },
+        })
+      );
+      expect(result).toEqual(comicBook);
+    });
+  });
+});
+```
 
 #### Controllers
 
-Unit tests for controllers.
+The tests we just wrote for our models were pretty simple. Since the models are our database layer, we just needed to test whether or not the specific functions that wrote to or got data from the database were working. 
 
-#### Github Actions
+The controllers are a little different and more involved. The controllers are our business layer and are responsible for handling the requests from the routers and sending things to the models and then sending the responses back to the client. It's a big job and we've got to test all the possible scenarios. So it's not just "did the function work?" Instead, it's more of "Did the right function call happen, did we get back the response we expected, and what happens when we don't?"
+
+The first thing we'll need to do here is to set up a mock request and mock response. The business layer is expecting a request to come in and it's expecting a response to come back. We'll need to mock these since we won't actually have them. 
+
+In your `test-utils` folder, create a new file called `mockRequest.ts` and in that file, paste the following code:
+
+```
+import { Request, Response } from "express";
+
+interface mockRequestArgs {
+  body?: any;
+  params?: any;
+  query?: any;
+  headers?: any;
+  token?: string;
+  locals?: any;
+}
+
+const mockRequest = (args?: mockRequestArgs) => {
+  const get = (name: string) => {
+    if (name === "authorization") return `Bearer ${args?.token}`;
+    return null;
+  };
+
+  const user = {
+    id: 1,
+  };
+
+  return {
+    ...args,
+    user,
+    get,
+  } as unknown as Request;
+};
+
+const mockResponse = (userId?: number) => {
+  const res = {} as Response;
+  res.sendStatus = jest.fn().mockReturnValue(res);
+  res.status = jest.fn().mockReturnValue(res);
+  res.send = jest.fn().mockReturnValue(res);
+  res.json = jest.fn().mockReturnValue(res);
+  res.locals = { user_id: userId ?? 1 };
+  return res;
+};
+
+export { mockRequest, mockResponse };
+```
+
+What do we have here? We've set up two new functions.
+
+- `mockRequest` takes in request parameters (things like `body`, `params`, `query`, `headers`, and `token`). It handles a request for authorization, defines a `user` with an `id` of 1 (to simulate someone actually be signed in), and then returns the request.
+- Similarly,`mockResponse` takes in a user id and returns a mocked response. You can see that we're mocking a lot of the methods that we would use in our responses in our controllers. Things like `sendStatus`, `status`, `send`, `json`, and `locals`.
+
+Great. Now that we have that working, let's write our first controller test.
+
+In your `/controllers/__tests__` folder, create a new file called `comic_books.test.ts` and paste in the following code:
+
+```
+import { comicBookModel } from "../../models";
+import { mockRequest, mockResponse } from "../../test-utils/mockRequest";
+import { deleteComicBook } from "../comic_books";
+import { when } from "jest-when";
+
+jest.mock("../../models/comic_books");
+
+describe("Comic Books Controller", () => {
+  describe("deleteComicBook", () => {
+    it("should delete a comic book when a valid comic book id is provided", async () => {
+      // Arrange
+      const req = mockRequest({ params: { id: 1 } });
+      const res = mockResponse();
+
+      const mockComicBook = {
+        id: 1,
+        title: "Avengers",
+        issue_number: 1,
+        publisher_id: 2,
+        published_date: new Date("2018-05-02"),
+        created_at: new Date(),
+        updated_at: null,
+        deleted_at: null,
+      };
+
+      when(comicBookModel.getComicBookById).calledWith(1).mockResolvedValue(mockComicBook);
+      when(comicBookModel.deleteComicBook).calledWith(1).mockResolvedValue(mockComicBook);
+
+      // Act
+      await deleteComicBook(req, res);
+
+      // Assert
+      expect(comicBookModel.deleteComicBook).toHaveBeenCalledWith(1);
+      expect(res.status).toHaveBeenCalledWith(204);
+      expect(res.json).toHaveBeenCalledWith({
+        message: "Deleted comic book",
+        comicBook: {
+          id: mockComicBook.id,
+          title: mockComicBook.title,
+          issue_number: mockComicBook.issue_number,
+          publisher_id: mockComicBook.publisher_id,
+          published_date: mockComicBook.published_date,
+          created_at: mockComicBook.created_at,
+        },
+      });
+    });
+  });
+});
+```
+
+Let's take a look at that first test and break it down by section.
+
+- "Arrange": We use the `mockRequest` and `mockResponse` functions we wrote and we set up a mock comic book. Then we use the `when` function to set up a couple of mocked responses. What we're saying here is that when the `getComicBookById` or the `deleteComicBook` functions are called with the id of 1, we want to return the mock comic book.
+- "Act": We call the `deleteComicBook` function with the mock request and mock response.
+- "Assert": We check that the `deleteComicBook` function was called with the id of 1. Then we check that the mock response has the correct status code and message.
+
+Looking at the delete comic book controller, what else sticks out to you as testable? A few things I see are that we return a message if the comic book doesn't exist, and we return a 500 error with a specific error message if something goes wrong. So let's write those tests. When we're done, the file should look like this:
+
+```
+import { comicBookModel } from "../../models";
+import { mockRequest, mockResponse } from "../../test-utils/mockRequest";
+import { deleteComicBook } from "../comic_books";
+import { when } from "jest-when";
+
+jest.mock("../../models/comic_books");
+
+describe("Comic Books Controller", () => {
+  describe("deleteComicBook", () => {
+    it("should delete a comic book when a valid comic book id is provided", async () => {
+      // Arrange
+      const req = mockRequest({ params: { id: 1 } });
+      const res = mockResponse();
+
+      const mockComicBook = {
+        id: 1,
+        title: "Avengers",
+        issue_number: 1,
+        publisher_id: 2,
+        published_date: new Date("2018-05-02"),
+        created_at: new Date(),
+        updated_at: null,
+        deleted_at: null,
+      };
+
+      when(comicBookModel.getComicBookById).calledWith(1).mockResolvedValue(mockComicBook);
+      when(comicBookModel.deleteComicBook).calledWith(1).mockResolvedValue(mockComicBook);
+
+      // Act
+      await deleteComicBook(req, res);
+
+      // Assert
+      expect(comicBookModel.deleteComicBook).toHaveBeenCalledWith(1);
+      expect(res.status).toHaveBeenCalledWith(204);
+      expect(res.json).toHaveBeenCalledWith({
+        message: "Deleted comic book",
+        comicBook: {
+          id: mockComicBook.id,
+          title: mockComicBook.title,
+          issue_number: mockComicBook.issue_number,
+          publisher_id: mockComicBook.publisher_id,
+          published_date: mockComicBook.published_date,
+          created_at: mockComicBook.created_at,
+        },
+      });
+    });
+
+    it("should return a message if the comic book does not exist", async () => {
+      // Arrange
+      const req = mockRequest({ params: { id: 1 } });
+      const res = mockResponse();
+
+      when(comicBookModel.getComicBookById).calledWith(1).mockResolvedValue(null);
+
+      // Act
+      await deleteComicBook(req, res);
+
+      // Assert
+      expect(res.status).toHaveBeenCalledWith(404);
+      expect(res.send).toHaveBeenCalledWith("No comic book with that id exists");
+    });
+
+    it("should return a 500 error with a specific error message if something goes wrong", async () => {
+      // Arrange
+      const req = mockRequest({ params: { id: 1 } });
+      const res = mockResponse();
+
+      const errorMessage = "You found an error! Congratulations!";
+      when(comicBookModel.getComicBookById)
+        .calledWith(1)
+        .mockResolvedValue(Promise.reject(new Error(errorMessage)));
+
+      // Act
+      await deleteComicBook(req, res);
+
+      // Assert
+      expect(res.status).toHaveBeenCalledWith(500);
+      expect(res.json).toHaveBeenCalledWith({
+        message: "Internal Server Error",
+        error: errorMessage,
+      });
+    });
+
+    it("should return a 500 error with a generic error message if something that isn't an error goes wrong", async () => {
+      // Arrange
+      const req = mockRequest({ params: { id: 1 } });
+      const res = mockResponse();
+
+      when(comicBookModel.getComicBookById)
+        .calledWith(1)
+        .mockResolvedValue(Promise.reject("Unexpected Error"));
+
+      // Act
+      await deleteComicBook(req, res);
+
+      // Assert
+      expect(res.status).toHaveBeenCalledWith(500);
+      expect(res.json).toHaveBeenCalledWith({
+        message: "Internal Server Error",
+        error: "An unknown error occurred.",
+      });
+    });
+  });
+});
+```
+
+For those last two tests to work the way they are written, we need to make a small change to the `deleteComicBook` function in the `comic_books` controller. We will need to change the `catch` section at the end to look like this:
+
+```
+    if (error instanceof Error) {
+      res.status(500).json({
+        message: "Internal Server Error",
+        error: error.message,
+      });
+    } else {
+      res.status(500).json({
+        message: "Internal Server Error",
+        error: "An unknown error occurred.",
+      });
+    }
+```
+
+This just says that if we get a specific error, something that was more than likely thrown with a `new Error()` function, we return a 500 error with the error message. If we don't get a specific error, we return a 500 error with a generic error message.
+
+Keep in mind that these are just the tests for the `deleteComicBook` function. We'll need to write the rest of the tests for all of the functions in this particular controller and then for all of the other controllers.
+
+#### Github Actions Chapter 1: The Unit
 
 Set up Github actions for server unit tests.
 
@@ -115,36 +643,22 @@ Set up Github actions for server unit tests.
 
 Integration tests for routers.
 
-#### Github Actions
+#### Github Actions Chapter 2: The Integration
 
 Set up Github actions for server integration tests.
 
 **\*\*\*** Need to go back and add a lesson for adding Github actions for verifying our database and schema. **\*\*\***
-
-unit tests:
-jest
-jest-when
-controllers/handlers
 
 integration tests:
 supertest
 testcontainers
 responses and response codes and validation
 
-test reporters:
-jest-junit
-
-describe all tests
-nested describes
-"it should" ...
 make sure you test the response codes
-
-AAA Approach
-Arrange, Act, Assert
 
 Github Actions
 
 ## Homework
 
 - Continue to work on anything that we've already covered if needed.
-- Write any other tests you think you need.
+- Finish writing the tests for all of the models, routers, and controllers.

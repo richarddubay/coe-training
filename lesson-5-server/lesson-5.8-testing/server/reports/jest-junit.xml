@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites name="jest tests" tests="1" failures="0" errors="0" time="1.792">
+  <testsuite name="models/__tests__/comic_books.test.ts" errors="0" failures="0" skipped="0" timestamp="2024-11-14T17:08:38" time="1.427" tests="1">
+    <testcase classname="Comic Books Model › deleteComicBook" name="should delete a comic book" time="0.001">
+    </testcase>
+  </testsuite>
+</testsuites>
