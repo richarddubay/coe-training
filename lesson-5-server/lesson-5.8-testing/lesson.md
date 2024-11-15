@@ -650,7 +650,7 @@ Just like with the unit tests, we'll need to do a little set up here before we c
 First things first, we'll need to install a few packages.
 
 - `supertest` (https://github.com/ladjs/supertest): `supertest` is a library for making HTTP requests in NodeJS. This will allow us to make requests without having to actually start a server. We can install it using `npm i --save-dev supertest`.
-- `testcontainers` (https://github.com/testcontainers/testcontainers-node): `testcontainers` is a library for creating and running containers in NodeJS. This will allow us to spin up a real database in a container that we can use for our tests. The tests won't interfere with our actual database and each test run starts with a clean databaseWe can install it using `npm i --save-dev testcontainers`.
+- `testcontainers` (https://github.com/testcontainers/testcontainers-node | https://node.testcontainers.org/quickstart/): `testcontainers` is a library for creating and running containers in NodeJS. This will allow us to spin up a real database in a container that we can use for our tests. The tests won't interfere with our actual database and each test run starts with a clean databaseWe can install it using `npm i --save-dev testcontainers`.
 - We'll also need to install the types for `supertest`. We can do that with the following command: `npm i --save-dev @types/supertest`.
 
 Next, because we're going to be spinning up a docker container for our testing database, we'll need to do a couple of extra things to configure Jest to handle that. To that end, we'll create a separate configuration file for our integration tests. In the root of the `/server` folder, let's create a `jest.integration.config.ts` file and paste in the following code:
@@ -804,22 +804,17 @@ describe("/comic_books", () => {
 });
 ```
 
+Here we are using the `request` function from `supertest` to make requests to our server. Then we tell it what kind of request we're making, add in any data we might need to send, set any headers we need, and then tell it what we expect to get back.
+
 **Please Note:** These tests are cumulative. If you delete something from the database in one test, and then try to pull that same thing in another test, it will fail.
+
+**Please Note 2:** As much as possible make sure you're testing the response codes here. We always want to make sure that we're getting back the right response codes.
 
 #### Github Actions Chapter 2: The Integration
 
 Set up Github actions for server integration tests.
 
 **\*\*\*** Need to go back and add a lesson for adding Github actions for verifying our database and schema. **\*\*\***
-
-integration tests:
-supertest
-testcontainers
-responses and response codes and validation
-
-make sure you test the response codes
-
-Github Actions
 
 ## Homework
 
