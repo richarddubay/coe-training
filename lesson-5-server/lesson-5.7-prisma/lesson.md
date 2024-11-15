@@ -441,6 +441,67 @@ Highlights:
 
 Now if we were to test out these endpoints, we should be able to create, read, update, and delete a record attached to your real database.
 
+## Addendum: Github Action for Verifying the Database Schema
+
+Remember Github Actions? They're back!
+
+Now that we have Prisma up and running, we can add a Github Action to verify that our database schema is correct. The purpose here is two-fold:
+
+- to verify that we can run the Prisma `pull` and `generate` commands.
+- to update the repo with any schema changes that we might be missing.
+
+Warning: If this action actually does update the schema and push to the repo, you will have to pull from the repo again before doing anything else, otherwise you run the risk of overwriting these changes.
+
+🛑 Full disclosure up front: As of this lesson, I haven't been able to actually get the "write the changes to the repo" part to work. So this is a mostly theoretical exercise. 
+
+So let's get started. In your `.github/workflows` folder, create a new file called `verify-schema-update.yml`. Inside of this file, add the following:
+
+```
+name: Verify Schema Update
+
+on:
+  workflow_call:
+  workflow_run:
+    workflows: ["Verify Database"]
+    types:
+      - completed
+
+defaults:
+  run:
+    working-directory: ./server
+
+env:
+  DATABASE_URL: postgresql://postgres:password@localhost:5433/f1_fantasy_league_db?schema=public
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v3
+      - name: execute flyway in docker 🐳
+        run: docker compose up -d
+      - name: Server Install
+        run: npm i
+      - name: Prisma Pull
+        run: npm run prisma:pull
+      - name: Prisma Generate
+        run: npm run prisma:generate
+      - name: Debug Git Status
+        run: git status
+      - name: Check for modified snapshots / database schema
+        id: snapshot-check
+        run: echo ::set-output name=modified::$(if git status | grep "nothing to commit"; then echo "false"; else echo "true"; fi)
+      - name: Commit any updated snapshots / database schema changes
+        if: steps.snapshot-check.outputs.modified == 'true'
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: Commit for snapshot update
+      - name: Spin Down Docker 🐳
+        run: docker compose down
+```
+
 ## Homework
 
 - Continue to work on anything that we've already covered if needed.
