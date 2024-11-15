@@ -2,6 +2,7 @@ CREATE TABLE IF NOT EXISTS public.comic_books (
   id SERIAL PRIMARY KEY NOT NULL,
   title VARCHAR(255) NOT NULL,
   issue_number INT NOT NULL,
+  rating INT,
   publisher_id INT NOT NULL,
   published_date TIMESTAMP WITH TIME ZONE,
   created_at TIMESTAMP WITH TIME ZONE,
