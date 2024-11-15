@@ -51,6 +51,7 @@ So what have we got here?
 ### Let's Run This Action
 
 - First things first, let's go ahead and push this file to Github. This will make it so that Github will know about this action and will be able to use it when we create a PR next.
+- Now that we've pushed this file to Github, let's go ahead and make a small change to the a file in the `database` folder and then make a PR. This should trigger the action we just created.
 
 ## Homework
 
