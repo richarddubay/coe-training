@@ -12,3 +12,4 @@ VALUES
   ('DC vs. Vampires', 1, 1, '2021-10-26', CURRENT_TIMESTAMP),
   ('Fall of the House of X', 1, 2, '2024-01-03', CURRENT_TIMESTAMP),
   ('Wonder Woman', 1, 1, '2023-09-19', CURRENT_TIMESTAMP);
+  ('Detective Comics', 1, 1, '2016-06-08', CURRENT_TIMESTAMP);
