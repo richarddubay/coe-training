@@ -44,16 +44,17 @@ jobs:
 So what have we got here?
 
 - We name the action `Verify Database`.
-- We are listening for a pull request to the `main` branch, and we're only looking for changes to files in the `database` folder. Verify that path to make sure that if you've named `database` something else, it'll still work.
+- We are listening for a pull request to the `main` branch, and we're only looking for changes to files in the `database` folder. Verify that path to make sure that if you've named `database` something else or if you've moved your database folder somewhere that isn't in the root of your project, it'll still work.
 - We then run a job that we've called `verify` that checks out our code and then runs `docker compose up`.
 - **Note:** The `--exit-code-from` option will catch if the Flyway migrations succeed or fail, and, therefore, will either pass or fail the action based on that exit code.
 
 ### Let's Run This Action
 
 - First things first, let's go ahead and push this file to Github. This will make it so that Github will know about this action and will be able to use it when we create a PR next.
-- Now that we've pushed this file to Github, let's go ahead and make a small change to the a file in the `database` folder and then make a PR. This should trigger the action we just created.
+- Now that we've pushed this file to Github, let's go ahead and make a small change to the a file in the `database` folder and then make a PR. This should trigger the action we just created. This can be something as simple as just adding some more data to your local seed data file, or this could be adding another migration for something that you know you missed. 
+- 💥 Just like that. All done.
 
 ## Homework
 
-- Make sure that you're `verify database` and `verify schema` Github actions are working.
+- Make sure that you're `verify database` Github action is working.
 - Continue to work on anything that we've already covered if needed.
