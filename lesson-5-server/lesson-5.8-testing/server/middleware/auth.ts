@@ -7,10 +7,10 @@ export async function authMiddleware(
   next: NextFunction
 ) {
   // This will be useful for testing later.
-  // if (process.env.NODE_ENV === "test") {
-  //   res.locals.user_id = 1;
-  //   return next();
-  // }
+  if (process.env.NODE_ENV === "test") {
+    res.locals.user_id = 1;
+    return next();
+  }
 
   // If you happen to have trouble getting your auth middleware to work in your app.ts file, this is one way
   // you could potentially bypass that problem.

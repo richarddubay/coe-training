@@ -641,7 +641,170 @@ Set up Github actions for server unit tests.
 
 #### Routers
 
-Integration tests for routers.
+What is the difference between unit and integration tests? Unit tests are focused on individual pieces, or functions, of the application. They test code in isolation. Integration tests, on the other hand, are focused on the whole application and test how multiple components work together.
+
+To test our routers, we're going to need to use integration tests because we want to test what happens when a request is made to a route.
+
+Just like with the unit tests, we'll need to do a little set up here before we can get to writing our tests.
+
+First things first, we'll need to install a few packages.
+
+- `supertest` (https://github.com/ladjs/supertest): `supertest` is a library for making HTTP requests in NodeJS. This will allow us to make requests without having to actually start a server. We can install it using `npm i --save-dev supertest`.
+- `testcontainers` (https://github.com/testcontainers/testcontainers-node): `testcontainers` is a library for creating and running containers in NodeJS. This will allow us to spin up a real database in a container that we can use for our tests. The tests won't interfere with our actual database and each test run starts with a clean databaseWe can install it using `npm i --save-dev testcontainers`.
+- We'll also need to install the types for `supertest`. We can do that with the following command: `npm i --save-dev @types/supertest`.
+
+Next, because we're going to be spinning up a docker container for our testing database, we'll need to do a couple of extra things to configure Jest to handle that. To that end, we'll create a separate configuration file for our integration tests. In the root of the `/server` folder, let's create a `jest.integration.config.ts` file and paste in the following code:
+
+```
+const config = {
+  globalSetup: "./test-setup/global-setup.js",
+  globalTeardown: "./test-setup/global-teardown.js",
+  clearMocks: true,
+  testTimeout: 1500,
+  testEnvironment: "node",
+  preset: "ts-jest",
+};
+
+export default config;
+```
+
+The big thing to take away from this file is that we are going to be defining a global setup file that will run before the tests start, and a global teardown file that will run after the tests finish. In the setup file we'll set up the Docker container to run our tests in. In the teardown file we'll stop the Docker container. Let's go ahead and create those files now.
+
+Create a `test-setup` folder in the root of the `/server` folder.
+
+Inside of that `test-setup` folder, let's create a `global-setup.js` file and paste in the following code:
+
+```
+//global-setup.js
+
+const path = require("path");
+const { DockerComposeEnvironment, Wait } = require("testcontainers");
+
+// https://node.testcontainers.org/features/compose/
+module.exports = async () => {
+  const composeFilePath = path.resolve(__dirname, "../../");
+  const composeFile = "docker-compose.yml";
+
+  global.__ENVIRONMENT__ = await new DockerComposeEnvironment(
+    composeFilePath,
+    composeFile
+  )
+    .withWaitStrategy("flyway-1", Wait.forLogMessage(/^Successfully applied/))
+    .up();
+
+  await new Promise((x) => setTimeout(x, 500));
+};
+```
+
+In this file, we're first defining where it can find our `docker-compose.yml` file. Then we're creating a global variable called `__ENVIRONMENT__` that will be used later to stop our Docker container. It is going to spin up the container, waiting for Flyway to finish running the migrations before it does so. 
+
+Inside of the `test-setup` folder, let's create a `global-teardown.js` file and paste in the following code:
+
+```
+module.exports = async () => {
+  await global.__ENVIRONMENT__?.down();
+};
+```
+
+All this file is doing is stopping the Docker container that we started in the `global-setup.js` file. Once all the tests finish, this file will run and stop the container.
+
+In the `package.json` file, we need to add a script for running the integration tests. Add the following line to the `scripts` section:
+
+```
+"test:integration": "jest --config ./jest.integration.config.ts --testPathPattern ./routers/ --forceExit",
+```
+
+This will run the integration tests in the `/routers` folder using the new configuration file we just created.
+
+One last thing, if we haven't already done this, in your `auth.ts` middleware, add (or uncomment) the following code:
+
+```
+if (process.env.NODE_ENV === "test") {
+    res.locals.user_id = 1;
+    return next();
+}
+```
+
+Great. Now let's write some tests!
+
+In the `/routers/__tests__` folder, let's create a `comic_books.test.ts` file and paste in the following code:
+
+```
+import app from "../../app";
+import request from "supertest";
+
+describe("/comic_books", () => {
+  describe("DELETE /comic_books/1", () => {
+    it("should respond with a 204", async () => {
+      await request(app)
+        .delete("/comic_books/1")
+        .set("Accept", "application/json")
+        .expect(204);
+    });
+  });
+
+  describe("GET /comic_books", () => {
+    it("should respond with a 200", async () => {
+      await request(app)
+        .get("/comic_books")
+        .set("Accept", "application/json")
+        .expect("Content-Type", /json/)
+        .expect(200);
+    });
+  });
+
+  describe("GET /comic_books/1", () => {
+    it("should respond with a 404", async () => {
+      await request(app)
+        .get("/comic_books/1")
+        .set("Accept", "application/json")
+        .expect("Content-Type", /json/)
+        .expect(404);
+    });
+  });
+
+  describe("GET /comic_books/2", () => {
+    it("should respond with a 200", async () => {
+      await request(app)
+        .get("/comic_books/2")
+        .set("Accept", "application/json")
+        .expect("Content-Type", /json/)
+        .expect(200);
+    });
+  });
+
+  describe("POST /comic_books", () => {
+    it("should respond with a 201", async () => {
+      await request(app)
+        .post("/comic_books")
+        .send({
+          title: "Avengers Comic Book Title",
+          issue_number: 1,
+          publisher_id: 2,
+          published_date: new Date("2018-05-02"),
+        })
+        .set("Accept", "application/json")
+        .expect("Content-Type", /json/)
+        .expect(201);
+    });
+  });
+
+  describe("PUT /comic_books/2", () => {
+    it("should respond with a 200", async () => {
+      await request(app)
+        .put("/comic_books/2")
+        .send({
+          title: "Dark Knight Gotham Batman Detective",
+        })
+        .set("Accept", "application/json")
+        .expect("Content-Type", /json/)
+        .expect(200);
+    });
+  });
+});
+```
+
+**Please Note:** These tests are cumulative. If you delete something from the database in one test, and then try to pull that same thing in another test, it will fail.
 
 #### Github Actions Chapter 2: The Integration
 
