@@ -2,7 +2,9 @@
 
 # Unosquare Product Development COE Training
 
-This is a repo for all of the training material for the Product Development Center of Excellence developer training. Below you will find links to each of the topics we're going to cover and code samples for each. As you go through the topics you should see the code samples evolve and change.
+This is a repo for all of the training material for the Product Development Center of Excellence developer training.
+
+Below you will find links to each of the topics we're going to cover and code samples for each. As you go through the topics you should see the code samples evolve and change.
 
 ## Table of Contents
 
