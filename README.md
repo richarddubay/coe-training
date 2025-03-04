@@ -2,13 +2,18 @@
 
 # Unosquare D&D COE Training
 
-## Lesson 1: Introduction
+## Lesson 2: Project Planning
 
-- Course Expectations
-- Microsoft Article on API Design
+In this lesson we'll cover:
+
+- Review / Questions
 - Your Course Project
+- Project Initialization
+- MoSCoW Method
+- ERDs / Domain Diagrams
+- ADRs
 - Homework
 
 ## Next Steps
 
-When you're ready, continue to [lesson 2](https://github.com/richarddubay/coe-training/tree/lesson-2-project-planning), or head back to the [course index](https://github.com/richarddubay/coe-training).
+When you're ready, continue to [lesson 3](https://github.com/richarddubay/coe-training/tree/lesson-3-databases), or head back to the [course index](https://github.com/richarddubay/coe-training).
