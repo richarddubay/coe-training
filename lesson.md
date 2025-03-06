@@ -2,7 +2,7 @@
 
 ## Review / Questions
 
-- Is there anything that you read or watched that you want to talk about or ask questions about?
+- Is there anything from the previous lesson that you want to talk or ask questions about?
 
 ## Your Course Project
 
@@ -51,9 +51,9 @@ For example: A comic book selling site must have a way to purchase comic books.
 
 ### S: Should Have
 
-These are items that the project should have. There are important, but they aren’t necessary to ship the MVP. The difference between “must have” and “should have” could potentially be very small.
+These are items that the project should have. They are important, but they aren’t necessary to ship the MVP. The difference between “must have” and “should have” could potentially be very small.
 
-For example: Since we’re talking MVP, maybe signing in and tracking orders isn’t of the utmost priority when compared to being able to purchase a comic book. Or maybe the books don’t have dedicated series pages yet.
+For example: Since we’re talking MVP, maybe signing in and tracking orders isn’t of the utmost priority when compared to being able to purchase a comic book. Or maybe the books don’t have dedicated series pages yet. If that's the case, then we have a candidate for a “should have” item.
 
 ### C: Could Have
 
@@ -69,7 +69,7 @@ For example: The site won’t have comic book data other than title, publisher, 
 
 ### README
 
-In your README, we’ll want to see a section like this:
+In your README, you’ll want to create a section like this:
 
 ```
 # Your App Name
@@ -135,11 +135,11 @@ We’re going to make two diagrams in our README file.
 
 ### ERD
 
-An ERD is a “Entity Relationship Diagram.” This is a visual representation of the data structure for a database. It shows how the different entities (like tables and their particular fields in a database) are related. Is it a 1-to-1, a many-to-many, a 1-to-many, a many-to-1 relationship? This diagram should tell you.
+An ERD is a “Entity Relationship Diagram.” It focuses on the structure of data in a database. It shows how the different entities (like tables and their particular fields in a database) are related. Is it a 1-to-1, a many-to-many, a 1-to-many, a many-to-1 relationship? This diagram should tell you.
 
 ### Domain Diagram
 
-A “domain diagram” is a visual representation of the key concepts within a domain, but at a higher level than an ERD. Where an ERD focuses on more of the technical details (like how fields in tables in the database relate to each other), a domain diagram may only show the that certain entities relate to each other.
+A “domain diagram” is a visual representation of the key concepts within a domain, but at a higher level than an ERD. Where an ERD focuses on more of the technical details (like how fields in tables in the database relate to each other), a domain diagram may only show that certain entities relate to each other. A domain diagram usually does not call out any `id` type fields in a table and often includes functions that a particular entity might include.
 
 ### An Simple Example
 
@@ -156,7 +156,7 @@ An ERD might show:
     |  Customer  |      |  Order          |       | ComicBook  |
     |------------|      |-----------------|       |------------|
     | id (PK)    |1     | id (PK)         |1     n| id (PK)    |
-    | name       |---+--| orderDate       |-------| title      |
+    | name       |------| orderDate       |-------| title      |
     | email      |      | customerId (FK) |       | author     |
     +------------+      +-----------------+       | price      |
                                 |1                | publisher  |
@@ -179,20 +179,18 @@ The associated domain diagram notes that:
 
 So the diagram might look something like:
 
-    +-----------+       +---------+       +------------+
-    | Customer  |       |  Order  |       | ComicBook  |
-    +-----------+       +---------+       +------------+
-    | Name      |1     n| OrderID |1    n | ComicBookID|
-    | Email     |-------| Date    |-------| Title      |
-    +-----------+       | Total   |       | Author     |
-                        +---------+       | Publisher  |
-                              |1          +------------+
+    +---------------+       +---------+       +------------+
+    | Customer      |       |  Order  |       | ComicBook  |
+    +---------------+       +---------+       +------------+
+    | Name          |1     n| Date    |1    n | Title      |
+    | Email         |-------| Total   |-------| Author     |
+    | createOrder() |       +---------+       | Publisher  |
+    +---------------+         |1              +------------+
+                              |
                               |n
                         +-------------+
                         | OrderItem   |
                         +-------------+
-                        | OrderID     |
-                        | ComicBookID |
                         | Quantity    |
                         +-------------+
 
@@ -217,13 +215,13 @@ Mermaid is a tool for using text and code to create these diagrams in our Markdo
 
 We can use a VSCode extension like: [https://marketplace.visualstudio.com/items?itemName=bierner.markdown-mermaid](https://marketplace.visualstudio.com/items?itemName=bierner.markdown-mermaid) to preview the diagrams in VSCode.
 
-See the [ERDDiagrams](https://github.com/richarddubay/coe-training/tree/main/lesson-2-project-planning/README.md) document for examples.
+See the [ERDiagrams](https://github.com/richarddubay/coe-training/tree/lesson-2-project-planning/ERDiagrams.md) document for examples.
 
 ## ADRs
 
 ADRs, or “Architectural Decision Records” are documents that we can create for capturing important architectural decisions made during the course of creating our project.
 
-This is important because how many times have you been in a project where you asked yourself “Why does this project use two tables called User and User2” or any other “why is this project this way?” kind of questions? These documents serve to answer those questions.
+How many times have you been in a project where you asked yourself “Why does this project use two tables called User and User2” or any other “why is this project this way?” kind of questions? These documents are important because they serve to answer those questions.
 
 To create our ADRs we’re going to use a tool called … wait for it … “ADR Tools!” We can find that package at this link: [https://github.com/npryce/adr-tools](https://github.com/npryce/adr-tools). You can either install it globally or get it from Homebrew if you use that. The point is that you want to be able to use it from the command line.
 
