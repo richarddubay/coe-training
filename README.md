@@ -9,7 +9,7 @@ Below you will find links to each of the topics we're going to cover and code sa
 ## Table of Contents
 
 - [Lesson 1: Introduction](https://github.com/richarddubay/coe-training/tree/lesson-1-introduction)
-- [Lesson 2: Project Planning](https://github.com/richarddubay/coe-training/tree/main/lesson-2-project-planning)
+- [Lesson 2: Project Planning](https://github.com/richarddubay/coe-training/tree/lesson-2-project-planning)
 - [Lesson 3: Databases](https://github.com/richarddubay/coe-training/tree/main/lesson-3-databases)
 - [Lesson 4: Project Setup](https://github.com/richarddubay/coe-training/tree/main/lesson-4-project-setup)
 - [Lesson 5: Server](https://github.com/richarddubay/coe-training/tree/main/lesson-5-server)
