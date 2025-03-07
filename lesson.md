@@ -4,57 +4,60 @@
 
 - Let's go over the homework from last time:
   - Did you have any problems setting up your Github repo?
-  - Any issues with the MoSCoW method?
+  - Did you have any issues with the MoSCoW method?
   - Did you have any trouble with the Mermaid syntax or getting the ERD or domain diagrams made?
-  - What about the ADR? Did that go well?
-  - Any other questions?
+  - Did you struggle at all setting up your ARDs?
+  - Any other questions, comments, or concerns?
 
-## SQL vs. NoSQL (Relational vs. Non-Relational Databases)
+## Database Types
 
 There are really two types of databases. Relational and Non-Relational.
 
-- Relational:
-  - Structured databases with a fixed schema that store data in tables with rows and columns.
-  - The tables relate to each other through foreign keys, which are just ways to connect related information in different tables. For example: a comic book database might have a `comic_book` table and a `publisher` table. We can connect a comic book to a publisher by having a `publisher_id` column in the `comic_book` table that relates back to the `id` from the `publisher` table.
-  - These are best used in environments where the relationships between the data is very important.
-  - Think financial systems, inventory management, etc.
-  - These use SQL as their query language and therefore can use some pretty complex joins.
-  - Some examples include:
-    - PostgreSQL ([https://www.postgresql.org/](https://www.postgresql.org/)
-    - MySQL ([https://www.mysql.com/](https://www.mysql.com/)
-    - Microsoft SQL Server ([https://www.microsoft.com/en-us/sql-server](https://www.microsoft.com/en-us/sql-server)).
-  - For our project we’re going to be using Postgres.
-- Non-Relational:
-  - These are databases that store their data in unstructured formats.
-  - This data could be documents (like large JSON datasets), key-value pairs, or other things.
-  - These are best used when you have a huge amount of data that may or may not be related (and might change often) and you just need the ability to store and quickly read/write that data.
-  - Think social media graph data, recommendation engines, etc.
-  - These _do not_ use SQL as their query language and often each have their own language for accessing their data.
-  - Some examples here include Redis ([https://redis.io/](https://redis.io/)), MongoDB ([https://www.mongodb.com/](https://www.mongodb.com/)), or Amazon DynamoDB ([https://aws.amazon.com/dynamodb/](https://aws.amazon.com/dynamodb/)).
+### Relational
+
+- Structured databases with a fixed schema that store data in tables with rows and columns.
+- The tables relate to each other through a concept called "foreign keys", which you can think of as just ways to connect related information in different tables. For example: a comic book database might have a `comic_book` table and a `publisher` table. We can connect a comic book to a publisher by having a `publisher_id` column in the `comic_book` table that relates back to the `id` from the `publisher` table.
+- These are best used in environments where the relationships between the data is very important.
+- Think financial systems, inventory management, etc.
+- These use SQL as their query language and therefore can use some pretty complex joins.
+- Some examples of relational databases are:
+  - PostgreSQL ([https://www.postgresql.org/](https://www.postgresql.org/)
+  - MySQL ([https://www.mysql.com/](https://www.mysql.com/)
+  - Microsoft SQL Server ([https://www.microsoft.com/en-us/sql-server](https://www.microsoft.com/en-us/sql-server)).
+- For our project we’re going to be using Postgres.
+
+### Non-Relational:
+
+- These are databases that store data in unstructured formats.
+- This data could be documents (like large JSON datasets), key-value pairs, or other things.
+- These are best used when you have a huge amount of data that may or may not be related (and might change often) and you just need the ability to store and quickly read/write that data.
+- Think social media graph data, recommendation engines, etc.
+- These _do not_ use SQL as their primary query language (hence the term "NoSQL") and often each have their own language for accessing their data.
+- Some examples here include Redis ([https://redis.io/](https://redis.io/)), MongoDB ([https://www.mongodb.com/](https://www.mongodb.com/)), or Amazon DynamoDB ([https://aws.amazon.com/dynamodb/](https://aws.amazon.com/dynamodb/)).
 
 ## SQL
 
 - Stands for “Structured Query Language.”
-- There are 4 basic commands (SELECT, INSERT, UPDATE, DELETE).
-- SELECT: Retrieving data from the database.
-- INSERT: Adding new data to the database.
-- UPDATE: Modifying existing data in the database.
-- DELETE: Removing data from the database.
+- There are 4 basic commands (SELECT, INSERT, UPDATE, DELETE):
+  - SELECT: Retrieving data from the database.
+  - INSERT: Adding new data to the database.
+  - UPDATE: Modifying existing data in the database.
+  - DELETE: Removing data from the database.
 - A (very) basic query would look something like:
   - `SELECT column FROM table WHERE condition`
   - If you wanted to select every column from the table you would use an asterisk. So … `SELECT * FROM table WHERE condition`
 - The “WHERE” is used for filtering. So you could do something like `SELECT * FROM ComicBooks WHERE publisher = 'Marvel'` for example. This would return only the comic books that were published by Marvel.
-- These 4 basic commands line up perfectly with the CRUD principles.
+- These 4 basic commands line up perfectly with the our basic CRUD principles.
   - Create = Insert
   - Read = Select
   - Update = Update
   - Delete = Delete
-- We’ll do some homework at a site called SQL Bolt that will give you a much better introduction to SQL.
+- Want a better introduction to SQL? We’ll do some homework at a site called SQL Bolt this week that will help you get a better understanding of the basics.
 
 ## ORM
 
 - Stands for “Object-Relational Mapping.”
-- It’s a way for us to interact with our database through the models we create in code instead of having to write raw SQL. Some examples include: Prisma: [https://www.prisma.io/docs/getting-started](https://www.prisma.io/docs/getting-started), Drizzle: [https://orm.drizzle.team/docs/overview](https://orm.drizzle.team/docs/overview), and Sequelize: [https://sequelize.org/](https://sequelize.org/).
+- It’s a way for us to interact with our database through models/functions we create in code instead of having to write raw SQL. Some examples include: Prisma: [https://www.prisma.io/docs/getting-started](https://www.prisma.io/docs/getting-started), Drizzle: [https://orm.drizzle.team/docs/overview](https://orm.drizzle.team/docs/overview), and Sequelize: [https://sequelize.org/](https://sequelize.org/).
 - With an ORM, generally you’ll write a function call, and the ORM will translate that into a SQL query that it will execute against your database.
 - Using an ORM is somewhat safer than using SQL since the abstraction helps keep you away from SQL injection attacks.
 - If you need highly-performant or complex queries, SQL might still be the way to go, but an ORM is almost perfect for the majority of your general CRUD based operations.
@@ -71,7 +74,7 @@ would become something like:
 const marvelComicBooks = await db.select().from(comic_books).where(eq(ComicBooks.publisher, 'Marvel'))
 ```
 
-- For this training we’re going to be using Prisma.
+- For our training we’re going to be using Prisma as our ORM.
 
 ## Migrations
 

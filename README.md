@@ -1,21 +1,18 @@
 <img src="images/unosquare_logo.svg" width=200 />
 
-# Unosquare Product Development COE Training
+# Unosquare D&D COE Training
 
-This is a repo for all of the training material for the Product Development Center of Excellence developer training.
+## Lesson 3: Databases
 
-Below you will find links to each of the topics we're going to cover and code samples for each. As you go through the topics you should see the code samples evolve and change.
+In this lesson we'll cover:
 
-## Table of Contents
+- Review / Questions
+- Database Types
+- SQL
+- ORM
+- Migrations
+- Homework
 
-- [Lesson 1: Introduction](https://github.com/richarddubay/coe-training/tree/lesson-1-introduction)
-- [Lesson 2: Project Planning](https://github.com/richarddubay/coe-training/tree/lesson-2-project-planning)
-- [Lesson 3: Databases](https://github.com/richarddubay/coe-training/tree/main/lesson-3-databases)
-- [Lesson 4: Project Setup](https://github.com/richarddubay/coe-training/tree/main/lesson-4-project-setup)
-- [Lesson 5: Server](https://github.com/richarddubay/coe-training/tree/main/lesson-5-server)
+## Next Steps
 
-## Still To Do
-
-- 5.9: Error Handling
-- 5.10: Deployment (to AWS, including Github Actions and Lightsail)
-- 6: Front End
+When you're ready, continue to [lesson 4](https://github.com/richarddubay/coe-training/tree/lesson-4-project-planning), or head back to the [course index](https://github.com/richarddubay/coe-training).
