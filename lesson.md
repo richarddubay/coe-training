@@ -23,13 +23,13 @@ First, we want to create some folders that will hold our database “stuff.” S
 
 - Docker is a platform that allows you to package an application and all its dependencies and run them together in a container.
 - A container is a standalone package that includes everything you need to run an application. The code, settings, libraries … the whole thing.
-- I’ve heard Eli describe it as getting a new computer from Unosquare. Then you install the things you need on that machine to get your app to run. Then when you need a new container, you just throw that one away and start again.
-- With a container, your app will always run the same, regardless of where it is. There’s no chance that you will have different settings than someone else. No more “works on my machine.” Each container has its own filesystem, memory, and CPU limits.
+- One great way to describe it is that it's like getting a new computer. When you get a new computer, you have to install all the things on it so that your projects will run. Docker is like a "throw away" computer. You spin it up and it installs everything you need for your application. Then, when you're done or need a new container, you just throw that one away and start again.
+- With a container, your app will always run the same, regardless of where it is. There’s no chance that you will have different settings than someone else. No more “_works on my machine_.” Each container has its own filesystem, memory, and CPU limits.
 - By using Docker we get apps that run consistently across environments, with the ability to easily move our apps between different systems.
-- We’ll talk more about these over time, but there are two types of configuration files that we’ll work with. A `Dockerfile` and a `docker-compose.yml` file.
-- The `Dockerfile` is a set of instructions/configuration options that define what our Docker image will look like. It defines the environment in which our app will run. So it can do things like set a base image (a starting point), a working directory, running `npm install` and defining commands to run the app like `npm start`. When you build your Docker image with the `docker build` command, it will use this file as it’s foundation.
+- We’ll talk more about these, but there are two types of Docker configuration files that we’ll work with. A `Dockerfile` and a `docker-compose.yml` file.
+- The `Dockerfile` is a set of instructions/configuration options that define what our Docker image will look like. It defines the environment in which our app will run. It can do things like set a base image (a starting point), set up a working directory, runn `npm install` and define commands to run the app like `npm start`. When you later build your Docker image with the `docker build` command, it will use this file as it’s foundation.
 - The `docker-compose.yml` file, on the other hand, is used to orchestrate multiple-container Docker applications. We can define multiple individual services (other Docker images) along with things like environment variables or ports or anything else the services need to run. When you then run `docker compose up`, it will start all the services at once (you’ll see them in the `Images` tab in Docker Desktop).
-- In our case, we’re going to use a `docker-compose.yml` file to set up our database, and use Flyway to handle the migrations. Each of these will use other already created Docker images
+- In our case, we’re going to use a `docker-compose.yml` file to set up our database, and we'll use Flyway to handle the migrations. Each of these will use other already created Docker images.
 
 Next, let’s get Docker running.
 
@@ -39,7 +39,7 @@ If you haven’t yet, go here and install Docker Desktop: [https://www.docker.co
 
 ### Create Docker Compose File
 
-Here’s a link to the official docs for Docker Compose: [https://docs.docker.com/compose/](https://docs.docker.com/compose/).
+For reference, here’s a link to the official docs for Docker Compose: [https://docs.docker.com/compose/](https://docs.docker.com/compose/).
 
 Create a `docker-compose.yml` file in the root of your project and paste in the following:
 
@@ -62,37 +62,37 @@ volumes:
 
 Let’s go through this line-by-line:
 
-- We’re first letting Docker know that we’re going to define some services.
-- The first service we’re defining is a database service we’re calling `db`. You can pretty much name these anything you want but you’re going to use this name in other places so be smart about what you call it.
-- It’s going to use the latest version of the official Postgres image from Docker Hub. Which, if you get a chance, take a look through Docker Hub ([https://hub.docker.com/](https://hub.docker.com/)) and see all the different containers you could use.
-- The container will automatically restart if it stops or if Docker is relaunched.
-- This one is fun / tricky. The first port maps to your local machine and the second port maps to inside your container. So inside your container, PostgreSQL is going to use port 5432 (the default PostgreSQL port). But on your local machine it’s going to use port 5433 to access the database. I had to do this because I have a PostgreSQL instance already running on my machine that is using port 5432. If you don’t have a PostgreSQL instance already running, you may be able to use port 5432 with no problems.
-- Next, we’re going to define some environment variables. This says we’re going to create a database named `comic_book_store_db` when the container starts and we’re going to connect to it using the username `postgres` and the password `password`.
-- This maps the database volume to this directory inside the container. This is where PostgreSQL will store its data. By mapping it to a volume it allows us to have data persistence in case we ever delete the container.
-- These last couple of lines define the named volume `db` that we just used.
+- **Services**: We’re first letting Docker know that we’re going to define some services.
+- **db**: The first service we’re defining is a database service we’re calling `db`. You can pretty much name these anything you want but you’re going to use this name in other places so be smart about what you call it.
+- **Image**: It’s going to use the latest version of the official Postgres image from Docker Hub. Which, if you get a chance, take a look through Docker Hub ([https://hub.docker.com/](https://hub.docker.com/)) and see all the different containers you could use.
+- **Restart**: The container will automatically restart if it stops or if Docker is relaunched.
+- **Ports**: This one is fun / tricky. The first port maps to your local machine and the second port maps to inside your container. So inside your container, PostgreSQL is going to use port 5432 (the default PostgreSQL port). But on your local machine it’s going to use port 5433 to access the database. I had to do this because I have a PostgreSQL instance already running on my machine that is using port 5432. If you don’t have a PostgreSQL instance already running, you may be able to use port 5432 with no problems.
+- **Environment**: Next, we’re going to define some environment variables. This says we’re going to create a database named `comic_book_store_db` when the container starts and we’re going to connect to it using the username `postgres` and the password `password`.
+- **Volumes**: This maps the database volume to this directory inside the container. This is where PostgreSQL will store its data. By mapping it to a volume it allows us to have data persistence in case we ever delete the container.
+- **Volumes 2**: These last couple of lines define the named volume `db` that we just used.
 
-Once this is setup, we should run `docker compose up` to see if this works. Some things you should know:
+Once this is setup, we should run `docker compose up` to see if this works. Some things you should know about `docker compose` commands:
 
 - `docker compose up` will leave you attached in your terminal and will show you logs as you do things. Once you stop this, your container will also stop.
 - `docker compose up -d` will run `docker compose` in “detached” mode. This means that once things are up and running, your container will continue to run, but you won’t see any logs in your terminal.
-- `docker compose down` will tear down your container. In our case, because we have a persisted named volume, that will stay behind, but our container will be gone.
-- `docker compose down --volumes` , on the other hand, will delete your container, and the named volume.
-- You will also be able to see the images you used in your services on the `Images` tab of Docker Desktop.
+- `docker compose down` will tear down your container. In our case, because we have a persisted named volume, that (our data) will stay behind, but our container will be gone.
+- `docker compose down --volumes` , on the other hand, will delete your container _and_ the named volume (our data).
+- As mentioned before, you will also be able to see the images you used in your services on the `Images` tab of Docker Desktop.
 
 ### Beekeeper Studio
 
-At this point, our docker container should be created and it should be running. Now let’s connect to it using Beekeeper Studio ([https://www.beekeeperstudio.io/](https://www.beekeeperstudio.io/)) so we can see what’s there.
+At this point, our docker container should be created and it should be running. Now let’s connect to it using Beekeeper Studio ([https://www.beekeeperstudio.io/](https://www.beekeeperstudio.io/)) so we can see what’s there. You are free to use any database client you want, but Beekeeper Studio is pretty great.
 
 - Download Beekeeper Studio.
-- Add a new connection of type `Postgres`
+- Add a new connection of type `Postgres`.
 - Set the host to `localhost`.
 - Set the port to either `5432` or `5433` … whatever you defined in your `docker-compose.yml` file.
 - Set the username to `postgres` and your password to `password`.
 - Hit the `Test` button to see if the connection works.
 - Click `Connect` to connect to your database.
-- Once connected, in the upper left hand corner, drop down the `Select a database` down and choose your database. If it’s not showing there, click the refresh icon and try again.
+- Once connected, in the upper left hand corner, drop down the `Select a database` drop down and choose your database. If it’s not showing there, click the refresh icon and try again.
 
-As you can see, there is nothing there yet, but we’re on the way!
+As you can see, there is nothing in your database yet, but we’re on the way! 🚀
 
 ### Flyway
 
